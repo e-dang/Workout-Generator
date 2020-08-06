@@ -18,7 +18,8 @@ ARG USER_GID=$USER_UID
 ARG DEFAULT_UTILS="\
     pylint \
     autopep8 \
-    virtualenv"
+    virtualenv \
+    mypy"
 ENV PIPX_HOME=/usr/local/py-utils
 ENV PIPX_BIN_DIR=${PIPX_HOME}/bin
 ENV PATH=${PATH}:${PIPX_BIN_DIR}
