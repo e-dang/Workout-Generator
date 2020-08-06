@@ -17,6 +17,8 @@ services:
   mongo:
     container_name: mongo
     image: mongo:4.4.0
+    ports:
+      - 27017:27017
     restart: unless-stopped
     env_file: ../.env
     environment:
