@@ -5,7 +5,6 @@ FROM python:3.8.3 AS base
 # Development build layer. Taken from https://github.com/microsoft/vscode-dev-containers/blob/v0.122.1/containers/python-3/.devcontainer/base.Dockerfile
 FROM base AS dev
 
-
 # This Dockerfile adds a non-root user with sudo access. Use the "remoteUser"
 # property in devcontainer.json to use it. On Linux, the container user's GID/UIDs
 # will be updated to match your local UID/GID (when using the dockerFile property).
@@ -62,3 +61,15 @@ RUN apt-get update \
 # Set user to non-root user with sudo access and add their bin dir to path
 USER $USERNAME
 ENV PATH=/home/${USERNAME}/.local/bin:${PATH}
+
+# Test build layer
+FROM base AS test
+WORKDIR /usr/src/app
+COPY . .
+ENV PATH=/home/${USERNAME}/.local/bin:${PATH}
+RUN apt-get update \
+    && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get autoremove -y \
+    && apt-get clean -y \
+    && rm -rf /var/lib/apt/lists/* \
+    && pip3 install -r requirements.txt
