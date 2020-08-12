@@ -1,6 +1,7 @@
 from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
-from rest_auth.registration.serializers import RegisterSerializer
+import rest_auth.registration.serializers as reg_serializers
+import rest_auth.serializers as auth_serializers
 from rest_framework import serializers
 
 from .models import User
@@ -12,7 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('url', 'id', 'email', 'first_name', 'last_name')
 
 
-class RegisterSerializer(RegisterSerializer):
+class RegisterSerializer(reg_serializers.RegisterSerializer):
     username = None
     first_name = serializers.CharField(required=True, write_only=True, max_length=20)
     last_name = serializers.CharField(required=True, write_only=True, max_length=20)
@@ -43,3 +44,7 @@ class RegisterSerializer(RegisterSerializer):
         setup_user_email(request, user, [])
         user.save()
         return user
+
+
+class LoginSerializer(auth_serializers.LoginSerializer):
+    username = None

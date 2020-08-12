@@ -146,7 +146,8 @@ STATIC_URL = '/static/'
 
 
 REST_AUTH_SERIALIZERS = {
-    'USER_DETAILS_SERIALIZER': 'users.serializers.UserSerializer'
+    'USER_DETAILS_SERIALIZER': 'users.serializers.UserSerializer',
+    'LOGIN_SERIALIZER': 'users.serializers.LoginSerializer'
 }
 
 REST_AUTH_REGISTER_SERIALIZERS = {
