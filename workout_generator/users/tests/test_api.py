@@ -118,3 +118,27 @@ def test_registration_fail_duplicate_email(api_client):
 
     assert resp.status_code == 400
     assert 'email' in resp.data
+
+
+@pytest.mark.django_db
+def test_user_delete(auto_login_user):
+    url = reverse('delete-user')
+    api_client, _ = auto_login_user()
+
+    resp = api_client.delete(url)
+
+    assert resp.status_code == 204
+    assert len(User.objects.all()) == 0
+
+
+@pytest.mark.django_db
+def test_user_delete_fail(auto_login_user):
+    url = reverse('delete-user')
+    api_client, _ = auto_login_user()
+    api_client.credentials(HTTP_AUTHORIZATION='Token INVALID_TOKEN')
+
+    resp = api_client.delete(url)
+
+    assert resp.status_code == 401
+    assert len(User.objects.all()) == 1
+    assert 'Invalid token.' in resp.data['detail']
