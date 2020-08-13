@@ -15,8 +15,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 class RegisterSerializer(reg_serializers.RegisterSerializer):
     username = None
-    first_name = serializers.CharField(required=True, write_only=True, max_length=20)
-    last_name = serializers.CharField(required=True, write_only=True, max_length=20)
+    first_name = serializers.CharField(required=False, write_only=True, max_length=20)
+    last_name = serializers.CharField(required=False, write_only=True, max_length=20)
 
     def validate_first_name(self, value):
         if not value.isalpha():
