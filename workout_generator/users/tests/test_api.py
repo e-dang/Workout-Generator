@@ -71,3 +71,50 @@ def test_registration(api_client, data):
     assert user
     assert len(User.objects.all()) == 1
     assert resp.data['key'] == Token.objects.get(user=user.id).key
+
+
+@pytest.mark.parametrize('api_client, data, error_field', [
+    (None, {'email': 'JohnDoe@demo.com', 'password1': 'thisisatest123',
+            'password2': 'thisisatest123', 'first_name': 'John1', 'last_name': 'Doe'}, 'first_name'),
+    (None, {'email': 'JohnDoe@demo.com', 'password1': 'thisisatest123',
+            'password2': 'thisisatest123', 'first_name': 'John!', 'last_name': 'Doe'}, 'first_name'),
+    (None, {'email': 'JohnDoe@demo.com', 'password1': 'thisisatest123',
+            'password2': 'thisisatest123', 'first_name': 'Johnaaaaaaaaaaaaaaaaa', 'last_name': 'Doe'}, 'first_name'),
+    (None, {'email': 'JohnDoe@demo.com', 'password1': 'thisisatest123',
+            'password2': 'thisisatest123', 'first_name': 'John', 'last_name': 'Doe1'}, 'last_name'),
+    (None, {'email': 'JohnDoe@demo.com', 'password1': 'thisisatest123',
+            'password2': 'thisisatest123', 'first_name': 'John', 'last_name': 'Doe!'}, 'last_name'),
+    (None, {'email': 'JohnDoe@demo.com', 'password1': 'thisisatest123',
+            'password2': 'thisisatest123', 'first_name': 'John', 'last_name': 'Doeaaaaaaaaaaaaaaaaaa'}, 'last_name'),
+    (None, {'password1': 'thisisatest123',
+            'password2': 'thisisatest123', 'first_name': 'John', 'last_name': 'Doe!'}, 'email'),
+    (None, {'email': 'JohnDoe@demo.com',
+            'password2': 'thisisatest123', 'first_name': 'John', 'last_name': 'Doe!'}, 'password1'),
+    (None, {'email': 'JohnDoe@demo.com', 'password1': 'thisisatest123',
+            'first_name': 'John', 'last_name': 'Doe!'}, 'password2'),
+],
+    indirect=['api_client'],
+    ids=['first name with number', 'first name with symbol', 'first name too long', 'last name with number',
+         'last name with symbol', 'last name too long', 'missing_email', 'missing_password1', 'missing_password2'
+         ])
+@pytest.mark.django_db
+def test_registration_fail_invalid_fields(api_client, data, error_field):
+    url = reverse('rest_register')
+
+    resp = api_client.post(url, data)
+
+    assert resp.status_code == 400
+    assert error_field in resp.data
+
+
+@pytest.mark.django_db
+def test_registration_fail_duplicate_email(api_client):
+    url = reverse('rest_register')
+    data = {'email': 'JohnDoe@demo.com', 'password1': 'thisisatest123',
+            'password2': 'thisisatest123', 'first_name': 'John', 'last_name': 'Doe'}
+
+    _ = api_client.post(url, data)
+    resp = api_client.post(url, data)
+
+    assert resp.status_code == 400
+    assert 'email' in resp.data
