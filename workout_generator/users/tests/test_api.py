@@ -240,3 +240,55 @@ def test_user_detail_patch_fail_not_logged_in(auto_login_user):
 
     assert resp.status_code == 401
     assert 'Invalid token.' in resp.data['detail']
+
+
+@pytest.mark.django_db
+def test_user_change_password(auto_login_user, test_password):
+    url = reverse('rest_password_change')
+    api_client, user = auto_login_user()
+    new_password = 'thisisanewpassword123'
+    data = {'new_password1': new_password, 'new_password2': new_password, 'old_password': test_password}
+
+    resp = api_client.post(url, data)
+
+    assert resp.status_code == 200
+    assert User.objects.get(email=user.email).check_password(new_password)
+
+
+@pytest.mark.django_db
+def test_user_change_password_fail_not_logged_in(auto_login_user, test_password):
+    url = reverse('rest_password_change')
+    api_client, _ = auto_login_user()
+    invalidate_credentials(api_client)
+    new_password = 'thisisanewpassword123'
+    data = {'new_password1': new_password, 'new_password2': new_password, 'old_password': test_password}
+
+    resp = api_client.post(url, data)
+
+    assert resp.status_code == 401
+    assert 'Invalid token.' in resp.data['detail']
+
+
+@pytest.mark.parametrize('auto_login_user, test_password, data, error_field', [
+    (None, None, {'new_password2': 'a_different_test_password123', 'old_password': None}, 'new_password1'),
+    (None, None, {'new_password1': 'a_unique_test_password123', 'old_password': None}, 'new_password2'),
+    (None, None, {'new_password1': 'a_unique_test_password123',
+                  'new_password2': 'a_unique_test_password123'}, 'old_password'),
+    (None, None, {'new_password1': 'a_unique_test_password123',
+                  'new_password2': 'a_different_test_password123', 'old_password': None}, 'new_password2'),
+    (None, None, {'new_password1': 'a_unique_test_password123',
+                  'new_password2': 'a_unique_test_password123', 'old_password': 'invalid_password'}, 'old_password')
+],
+    indirect=['auto_login_user', 'test_password'],
+    ids=['missing new_password1', 'missing new_password2', 'missing old_password', 'mismatching new passwords', 'invalid old_password'])
+@pytest.mark.django_db
+def test_user_change_password_fail_invalid_input(auto_login_user, test_password, data, error_field):
+    url = reverse('rest_password_change')
+    api_client, _ = auto_login_user()
+    if 'old_password' in data and data['old_password'] is None:
+        data['old_password'] = test_password
+
+    resp = api_client.post(url, data)
+
+    assert resp.status_code == 400
+    assert error_field in resp.data
