@@ -1,10 +1,8 @@
-from .views import UserViewSet
-from rest_framework.routers import DefaultRouter
 from django.urls import include, path
-
-router = DefaultRouter()
-router.register(r'users', UserViewSet)
+from rest_auth.views import PasswordResetConfirmView
 
 urlpatterns = [
-    include('', include(router.urls))
+    path('', include('rest_auth.urls')),
+    path('registration/', include('rest_auth.registration.urls')),
+    path('password-reset-confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm')
 ]
