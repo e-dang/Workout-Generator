@@ -5,6 +5,10 @@ from rest_framework.authtoken.models import Token
 from users.models import User
 
 
+def invalidate_credentials(api_client):
+    api_client.credentials(HTTP_AUTHORIZATION='Token INVALID_TOKEN')
+
+
 @pytest.mark.django_db
 def test_login(api_client, create_user, test_password):
     url = reverse('rest_login')
@@ -43,7 +47,7 @@ def test_logout(auto_login_user):
 def test_logout_fail(auto_login_user):
     url = reverse('rest_logout')
     api_client, _ = auto_login_user()
-    api_client.credentials(HTTP_AUTHORIZATION='Token INVALID_TOKEN')
+    invalidate_credentials(api_client)
 
     resp = api_client.post(url)
 
@@ -135,10 +139,104 @@ def test_user_delete(auto_login_user):
 def test_user_delete_fail(auto_login_user):
     url = reverse('delete-user')
     api_client, _ = auto_login_user()
-    api_client.credentials(HTTP_AUTHORIZATION='Token INVALID_TOKEN')
+    invalidate_credentials(api_client)
 
     resp = api_client.delete(url)
 
     assert resp.status_code == 401
     assert len(User.objects.all()) == 1
+    assert 'Invalid token.' in resp.data['detail']
+
+
+@pytest.mark.django_db
+def test_user_detail_get(auto_login_user):
+    url = reverse('rest_user_details')
+    api_client, user = auto_login_user()
+
+    resp = api_client.get(url)
+
+    assert resp.status_code == 200
+    assert resp.data['email'] == user.email
+    assert resp.data['first_name'] == user.first_name
+    assert resp.data['last_name'] == user.last_name
+
+
+@pytest.mark.django_db
+def test_user_detail_get_fail_not_logged_in(auto_login_user):
+    url = reverse('rest_user_details')
+    api_client, _ = auto_login_user()
+    invalidate_credentials(api_client)
+
+    resp = api_client.get(url)
+
+    assert resp.status_code == 401
+    assert 'Invalid token.' in resp.data['detail']
+
+
+@pytest.mark.django_db
+def test_user_detail_put(auto_login_user):
+    url = reverse('rest_user_details')
+    api_client, user = auto_login_user()
+    data = {'email': user.email, 'first_name': 'new_first_name', 'last_name': 'new_last_name'}
+
+    resp = api_client.put(url, data)
+
+    assert resp.status_code == 200
+    assert resp.data['email'] == data['email']
+    assert resp.data['first_name'] != user.first_name
+    assert resp.data['last_name'] != user.last_name
+    assert resp.data['first_name'] == data['first_name']
+    assert resp.data['last_name'] == data['last_name']
+
+
+@pytest.mark.django_db
+def test_user_detail_put_fail_not_logged_in(auto_login_user):
+    url = reverse('rest_user_details')
+    api_client, _ = auto_login_user()
+    invalidate_credentials(api_client)
+    data = {'first_name': 'new_first_name', 'last_name': 'new_last_name'}
+
+    resp = api_client.put(url, data)
+
+    assert resp.status_code == 401
+    assert 'Invalid token.' in resp.data['detail']
+
+
+@pytest.mark.django_db
+def test_user_detail_put_fail_not_full_state(auto_login_user):
+    url = reverse('rest_user_details')
+    api_client, _ = auto_login_user()
+    data = {'first_name': 'new_first_name', 'last_name': 'new_last_name'}
+
+    resp = api_client.put(url, data)
+
+    assert resp.status_code == 400
+
+
+@pytest.mark.django_db
+def test_user_detail_patch(auto_login_user):
+    url = reverse('rest_user_details')
+    api_client, user = auto_login_user()
+    data = {'first_name': 'new_first_name', 'last_name': 'new_last_name'}
+
+    resp = api_client.patch(url, data)
+
+    assert resp.status_code == 200
+    assert resp.data['email'] == user.email
+    assert resp.data['first_name'] != user.first_name
+    assert resp.data['last_name'] != user.last_name
+    assert resp.data['first_name'] == data['first_name']
+    assert resp.data['last_name'] == data['last_name']
+
+
+@pytest.mark.django_db
+def test_user_detail_patch_fail_not_logged_in(auto_login_user):
+    url = reverse('rest_user_details')
+    api_client, _ = auto_login_user()
+    invalidate_credentials(api_client)
+    data = {'first_name': 'new_first_name', 'last_name': 'new_last_name'}
+
+    resp = api_client.patch(url, data)
+
+    assert resp.status_code == 401
     assert 'Invalid token.' in resp.data['detail']
