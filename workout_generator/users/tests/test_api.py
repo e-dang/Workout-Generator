@@ -2,6 +2,7 @@ import pytest
 
 from rest_framework.reverse import reverse
 from rest_framework.authtoken.models import Token
+from users.models import User
 
 
 @pytest.mark.django_db
@@ -50,3 +51,23 @@ def test_logout_fail(auto_login_user):
     assert len(resp.data) == 1
     assert 'Invalid token.' in resp.data['detail']
     assert len(Token.objects.all()) == 1
+
+
+@pytest.mark.parametrize('api_client, data', [
+    (None, {'email': 'JohnDoe@demo.com', 'password1': 'thisisatest123',
+            'password2': 'thisisatest123', 'first_name': 'John', 'last_name': 'Doe'}),
+    (None, {'email': 'Johnoe@demo.com', 'password1': 'thisisatest123', 'password2': 'thisisatest123'}),
+],
+    indirect=['api_client'],
+    ids=['with names', 'without names'])
+@pytest.mark.django_db
+def test_registration(api_client, data):
+    url = reverse('rest_register')
+
+    resp = api_client.post(url, data)
+
+    assert resp.status_code == 201
+    user = User.objects.get(email=data['email'])
+    assert user
+    assert len(User.objects.all()) == 1
+    assert resp.data['key'] == Token.objects.get(user=user.id).key
