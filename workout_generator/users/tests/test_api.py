@@ -1,6 +1,7 @@
 import pytest
 
 from rest_framework.reverse import reverse
+from rest_framework.authtoken.models import Token
 
 
 @pytest.mark.django_db
@@ -24,3 +25,14 @@ def test_login_fail(api_client, create_user):
     resp = api_client.post(url, {'email': user.email, 'password': 'THE_WRONG_PASSWORD'})
 
     assert resp.status_code == 400
+
+
+@pytest.mark.django_db
+def test_logout(auto_login_user):
+    url = reverse('rest_logout')
+    api_client, _ = auto_login_user()
+
+    resp = api_client.post(url)
+
+    assert resp.status_code == 200
+    assert len(Token.objects.all()) == 0
