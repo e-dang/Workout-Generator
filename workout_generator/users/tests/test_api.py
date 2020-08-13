@@ -36,3 +36,17 @@ def test_logout(auto_login_user):
 
     assert resp.status_code == 200
     assert len(Token.objects.all()) == 0
+
+
+@pytest.mark.django_db
+def test_logout_fail(auto_login_user):
+    url = reverse('rest_logout')
+    api_client, _ = auto_login_user()
+    api_client.credentials(HTTP_AUTHORIZATION='Token INVALID_TOKEN')
+
+    resp = api_client.post(url)
+
+    assert resp.status_code == 401
+    assert len(resp.data) == 1
+    assert 'Invalid token.' in resp.data['detail']
+    assert len(Token.objects.all()) == 1
