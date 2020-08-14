@@ -8,7 +8,7 @@ python: "3.8.3"
 script:
   - docker-compose -f .travis/docker-compose.yml -p workout_generator up -d
   - docker ps -a
-  - docker exec -it workout_generator bash -c "cd workout_generator && pytest -v"
+  - docker exec -it workout_generator bash -c "cd workout_generator && python manage.py makemigrations && python manage.py migrate && pytest -v"
 
 deploy:
   - provider: script
