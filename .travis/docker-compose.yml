@@ -5,19 +5,22 @@ services:
     restart: always
     build:
       context: ..
-      target: dev
+      target: test
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+      - SECRET_KEY
     ports:
       - 8000:8000
-    env_file: ../.env
-    command: sleep infinity
     links:
       - postgres
-    volumes:
-      - ..:/workspace:cached
+    tty: true
   postgres:
     container_name: postgres
     image: postgres:12.3
     restart: unless-stopped
-    env_file: ../.env
-    volumes:
-      - ../postgres_db:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
