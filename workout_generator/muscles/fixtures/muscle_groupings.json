@@ -1,0 +1,162 @@
+[
+    {
+        "pk": "back",
+        "model": "muscles.MuscleGrouping",
+        "fields": {
+            "name": "back",
+            "other_names": [],
+            "muscles": [
+                "traps",
+                "rhomboids",
+                "lats",
+                "teres major",
+                "rotator cuff",
+                "low back"
+            ]
+        }
+    },
+    {
+        "pk": "arms",
+        "model": "muscles.MuscleGrouping",
+        "fields": {
+            "name": "arms",
+            "other_names": [
+                "arm"
+            ],
+            "muscles": [
+                "biceps",
+                "triceps",
+                "forearms"
+            ]
+        }
+    },
+    {
+        "pk": "abs",
+        "model": "muscles.MuscleGrouping",
+        "fields": {
+            "name": "abs",
+            "other_names": [
+                "ab",
+                "core",
+                "abdominals"
+            ],
+            "muscles": [
+                "rectus abdominis",
+                "obliques",
+                "seratus anterior",
+                "transverse abdominis"
+            ]
+        }
+    },
+    {
+        "pk": "legs",
+        "model": "muscles.MuscleGrouping",
+        "fields": {
+            "name": "legs",
+            "other_names": [
+                "leg"
+            ],
+            "muscles": [
+                "quads",
+                "glutes",
+                "hamstrings",
+                "calves"
+            ]
+        }
+    },
+    {
+        "pk": "push",
+        "model": "muscles.MuscleGrouping",
+        "fields": {
+            "name": "push",
+            "other_names": [],
+            "muscles": [
+                "chest",
+                "anterior shoulders",
+                "triceps"
+            ]
+        }
+    },
+    {
+        "pk": "pull",
+        "model": "muscles.MuscleGrouping",
+        "fields": {
+            "name": "pull",
+            "other_names": [],
+            "muscles": [
+                "traps",
+                "rhomboids",
+                "lats",
+                "teres major",
+                "rotator cuff",
+                "biceps",
+                "forearms",
+                "posterior shoulders"
+            ]
+        }
+    },
+    {
+        "pk": "upper body",
+        "model": "muscles.MuscleGrouping",
+        "fields": {
+            "name": "upper body",
+            "other_names": [],
+            "muscles": [
+                "traps",
+                "rhomboids",
+                "lats",
+                "teres major",
+                "rotator cuff",
+                "biceps",
+                "triceps",
+                "forearms",
+                "chest",
+                "shoulders"
+            ]
+        }
+    },
+    {
+        "pk": "lower body",
+        "model": "muscles.MuscleGrouping",
+        "fields": {
+            "name": "lower body",
+            "other_names": [],
+            "muscles": [
+                "rectus abdominis",
+                "obliques",
+                "transverse abdominis",
+                "quads",
+                "glutes",
+                "hamstrings",
+                "calves"
+            ]
+        }
+    },
+    {
+        "pk": "full body",
+        "model": "muscles.MuscleGrouping",
+        "fields": {
+            "name": "full body",
+            "other_names": [],
+            "muscles": [
+                "traps",
+                "rhomboids",
+                "lats",
+                "teres major",
+                "rotator cuff",
+                "biceps",
+                "triceps",
+                "forearms",
+                "chest",
+                "shoulders",
+                "rectus abdominis",
+                "obliques",
+                "transverse abdominis",
+                "quads",
+                "glutes",
+                "hamstrings",
+                "calves"
+            ]
+        }
+    }
+]

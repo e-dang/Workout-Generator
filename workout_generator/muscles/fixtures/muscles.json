@@ -1,0 +1,257 @@
+[
+    {
+        "pk": "traps",
+        "model": "muscles.Muscle",
+        "fields": {
+            "name": "traps",
+            "other_names": [
+                "trap",
+                "trapezius"
+            ],
+            "subportions": [
+                "upper traps",
+                "middle traps",
+                "lower traps"
+            ]
+        }
+    },
+    {
+        "pk": "rhomboids",
+        "model": "muscles.Muscle",
+        "fields": {
+            "name": "rhomboids",
+            "other_names": [
+                "rhomboid"
+            ],
+            "subportions": []
+        }
+    },
+    {
+        "pk": "lats",
+        "model": "muscles.Muscle",
+        "fields": {
+            "name": "lats",
+            "other_names": [
+                "lat",
+                "latissimus dorsi"
+            ],
+            "subportions": []
+        }
+    },
+    {
+        "pk": "teres major",
+        "model": "muscles.Muscle",
+        "fields": {
+            "name": "teres major",
+            "other_names": [],
+            "subportions": []
+        }
+    },
+    {
+        "pk": "rotator cuff",
+        "model": "muscles.Muscle",
+        "fields": {
+            "name": "rotator cuff",
+            "other_names": [],
+            "subportions": []
+        }
+    },
+    {
+        "pk": "low back",
+        "model": "muscles.Muscle",
+        "fields": {
+            "name": "low back",
+            "other_names": [
+                "spinal erectors",
+                "erector spinae"
+            ],
+            "subportions": []
+        }
+    },
+    {
+        "pk": "biceps",
+        "model": "muscles.Muscle",
+        "fields": {
+            "name": "biceps",
+            "other_names": [
+                "bicep",
+                "bicep brachii"
+            ],
+            "subportions": [
+                "biceps short head",
+                "biceps long head"
+            ]
+        }
+    },
+    {
+        "pk": "forearms",
+        "model": "muscles.Muscle",
+        "fields": {
+            "name": "forearms",
+            "other_names": [
+                "forearm"
+            ],
+            "subportions": [
+                "anterior forearms",
+                "posterior forearms",
+                "brachialis"
+            ]
+        }
+    },
+    {
+        "pk": "triceps",
+        "model": "muscles.Muscle",
+        "fields": {
+            "name": "triceps",
+            "other_names": [
+                "tricep",
+                "triceps brachii"
+            ],
+            "subportions": [
+                "triceps long head",
+                "triceps medial head",
+                "triceps lateral head"
+            ]
+        }
+    },
+    {
+        "pk": "chest",
+        "model": "muscles.Muscle",
+        "fields": {
+            "name": "chest",
+            "other_names": [
+                "pec",
+                "pecs",
+                "pectoralis major"
+            ],
+            "subportions": [
+                "upper chest",
+                "middle chest",
+                "lower chest"
+            ]
+        }
+    },
+    {
+        "pk": "shoulders",
+        "model": "muscles.Muscle",
+        "fields": {
+            "name": "shoulders",
+            "other_names": [
+                "shoulder",
+                "delt",
+                "deltoid",
+                "deltoids",
+                "deltoideus"
+            ],
+            "subportions": [
+                "anterior shoulders",
+                "lateral shoulders",
+                "posterior shoulders"
+            ]
+        }
+    },
+    {
+        "pk": "rectus abdominis",
+        "model": "muscles.Muscle",
+        "fields": {
+            "name": "rectus abdominis",
+            "other_names": [],
+            "subportions": [
+                "upper rectus abdominis",
+                "lower rectus abdominis"
+            ]
+        }
+    },
+    {
+        "pk": "obliques",
+        "model": "muscles.Muscle",
+        "fields": {
+            "name": "obliques",
+            "other_names": [],
+            "subportions": [
+                "internal obliques",
+                "external obliques"
+            ]
+        }
+    },
+    {
+        "pk": "seratus anterior",
+        "model": "muscles.Muscle",
+        "fields": {
+            "name": "seratus anterior",
+            "other_names": [],
+            "subportions": []
+        }
+    },
+    {
+        "pk": "transverse abdominis",
+        "model": "muscles.Muscle",
+        "fields": {
+            "name": "transverse abdominis",
+            "other_names": [],
+            "subportions": []
+        }
+    },
+    {
+        "pk": "quads",
+        "model": "muscles.Muscle",
+        "fields": {
+            "name": "quads",
+            "other_names": [
+                "quad",
+                "quadricep",
+                "quadriceps"
+            ],
+            "subportions": [
+                "medial quads",
+                "lateral quads",
+                "proximal quads"
+            ]
+        }
+    },
+    {
+        "pk": "glutes",
+        "model": "muscles.Muscle",
+        "fields": {
+            "name": "glutes",
+            "other_names": [
+                "glute",
+                "butt",
+                "gluteal muscles"
+            ],
+            "subportions": [
+                "gluteus maximus",
+                "gluteus medius"
+            ]
+        }
+    },
+    {
+        "pk": "hamstrings",
+        "model": "muscles.Muscle",
+        "fields": {
+            "name": "hamstrings",
+            "other_names": [
+                "hamstring"
+            ],
+            "subportions": [
+                "medial hamstrings",
+                "lateral hamstrings"
+            ]
+        }
+    },
+    {
+        "pk": "calves",
+        "model": "muscles.Muscle",
+        "fields": {
+            "name": "calves",
+            "other_names": [
+                "calve",
+                "triceps surae"
+            ],
+            "subportions": [
+                "medial calves",
+                "lateral calves"
+            ]
+        }
+    }
+]
