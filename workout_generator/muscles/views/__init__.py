@@ -1,0 +1,3 @@
+from .muscle_subportion_views import MuscleSubPortionList, MuscleSubPortionDetail
+from .muscle_views import MuscleList, MuscleDetail
+from .muscle_grouping_views import MuscleGroupingList, MuscleGroupingDetail
