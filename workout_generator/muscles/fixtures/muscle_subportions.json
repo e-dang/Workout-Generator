@@ -1,0 +1,334 @@
+[
+    {
+        "pk": "upper traps",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "upper traps",
+            "other_names": [
+                "upper trap",
+                "superior trap",
+                "superior traps"
+            ]
+        }
+    },
+    {
+        "pk": "middle traps",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "middle traps",
+            "other_names": [
+                "middle trap",
+                "mid trap",
+                "mid traps"
+            ]
+        }
+    },
+    {
+        "pk": "lower traps",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "lower traps",
+            "other_names": [
+                "lower trap",
+                "inferior traps",
+                "inferior trap"
+            ]
+        }
+    },
+    {
+        "pk": "biceps short head",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "biceps short head",
+            "other_names": [
+                "bicep short head",
+                "inner biceps",
+                "inner bicep"
+            ]
+        }
+    },
+    {
+        "pk": "biceps long head",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "biceps long head",
+            "other_names": [
+                "bicep long head",
+                "outer biceps",
+                "outer bicep"
+            ]
+        }
+    },
+    {
+        "pk": "brachialis",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "brachialis",
+            "other_names": []
+        }
+    },
+    {
+        "pk": "anterior forearms",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "anterior forearms",
+            "other_names": [
+                "anterior forearm"
+            ]
+        }
+    },
+    {
+        "pk": "posterior forearms",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "posterior forearms",
+            "other_names": [
+                "posterior forearm"
+            ]
+        }
+    },
+    {
+        "pk": "triceps long head",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "triceps long head",
+            "other_names": [
+                "tricep long head"
+            ]
+        }
+    },
+    {
+        "pk": "triceps medial head",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "triceps medial head",
+            "other_names": [
+                "tricep medial head"
+            ]
+        }
+    },
+    {
+        "pk": "triceps lateral head",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "triceps lateral head",
+            "other_names": [
+                "tricep lateral head"
+            ]
+        }
+    },
+    {
+        "pk": "upper chest",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "upper chest",
+            "other_names": [
+                "chest clavicular head"
+            ]
+        }
+    },
+    {
+        "pk": "middle chest",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "middle chest",
+            "other_names": [
+                "chest sternal head"
+            ]
+        }
+    },
+    {
+        "pk": "lower chest",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "lower chest",
+            "other_names": [
+                "chest abdominal head"
+            ]
+        }
+    },
+    {
+        "pk": "anterior shoulders",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "anterior shoulders",
+            "other_names": [
+                "anterior shoulder",
+                "front shoulders",
+                "front shoulder",
+                "anterior delt",
+                "front delt",
+                "anterior deltoid",
+                "front deltoid"
+            ]
+        }
+    },
+    {
+        "pk": "lateral shoulders",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "lateral shoulders",
+            "other_names": [
+                "lateral shoulder",
+                "side shoulders",
+                "side shoulder",
+                "lateral delt",
+                "side delt",
+                "lateral deltoid",
+                "side deltoid"
+            ]
+        }
+    },
+    {
+        "pk": "posterior shoulders",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "posterior shoulders",
+            "other_names": [
+                "posterior shoulder",
+                "rear shoulders",
+                "rear shoulder",
+                "posterior delt",
+                "rear delt",
+                "posterior deltoid",
+                "rear deltoid"
+            ]
+        }
+    },
+    {
+        "pk": "upper rectus abdominis",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "upper rectus abdominis",
+            "other_names": []
+        }
+    },
+    {
+        "pk": "lower rectus abdominis",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "lower rectus abdominis",
+            "other_names": []
+        }
+    },
+    {
+        "pk": "internal obliques",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "internal obliques",
+            "other_names": [
+                "internal oblique"
+            ]
+        }
+    },
+    {
+        "pk": "external obliques",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "external obliques",
+            "other_names": [
+                "external oblique"
+            ]
+        }
+    },
+    {
+        "pk": "medial quads",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "medial quads",
+            "other_names": [
+                "medial quad",
+                "inner quads",
+                "inner quad"
+            ]
+        }
+    },
+    {
+        "pk": "lateral quads",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "lateral quads",
+            "other_names": [
+                "lateral quad",
+                "outer quads",
+                "outer quad"
+            ]
+        }
+    },
+    {
+        "pk": "proximal quads",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "proximal quads",
+            "other_names": [
+                "proximal quad",
+                "upper quads",
+                "upper quad"
+            ]
+        }
+    },
+    {
+        "pk": "gluteus maximus",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "gluteus maximus",
+            "other_names": []
+        }
+    },
+    {
+        "pk": "gluteus medius",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "gluteus medius",
+            "other_names": []
+        }
+    },
+    {
+        "pk": "medial hamstrings",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "medial hamstrings",
+            "other_names": [
+                "medial hamstring",
+                "inner hamstrings",
+                "inner hamstring"
+            ]
+        }
+    },
+    {
+        "pk": "lateral hamstrings",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "lateral hamstrings",
+            "other_names": [
+                "lateral hamstring",
+                "outer hamstrings",
+                "outer hamstring"
+            ]
+        }
+    },
+    {
+        "pk": "medial calves",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "medial calves",
+            "other_names": [
+                "medial calf",
+                "inner calves",
+                "inner calf"
+            ]
+        }
+    },
+    {
+        "pk": "lateral calves",
+        "model": "muscles.MuscleSubPortion",
+        "fields": {
+            "name": "lateral calves",
+            "other_names": [
+                "lateral calf",
+                "outer calves",
+                "outer calf"
+            ]
+        }
+    }
+]

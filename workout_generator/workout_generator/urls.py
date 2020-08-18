@@ -21,6 +21,7 @@ PREFIX_API_URL = f'api/{API_VERSION}/'
 
 extra_patterns = [
     path(f'users/', include('users.urls')),
+    path(f'muscles/', include('muscles.urls'))
 ]
 
 urlpatterns = [

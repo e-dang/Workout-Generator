@@ -3,7 +3,6 @@ import pytest
 from rest_framework.reverse import reverse
 from rest_framework.authtoken.models import Token
 from users.models import User
-from django.core import mail
 
 
 def invalidate_credentials(api_client):
