@@ -1,0 +1,122 @@
+[
+    {
+        "pk": 1,
+        "model": "equipment.Equipment",
+        "fields": {
+            "name": "barbell",
+            "other_names": [],
+            "user": 1,
+            "shared_with": [
+                1
+            ]
+        }
+    },
+    {
+        "pk": 2,
+        "model": "equipment.Equipment",
+        "fields": {
+            "name": "dumbbell",
+            "other_names": [],
+            "user": 1,
+            "shared_with": [
+                1
+            ]
+        }
+    },
+    {
+        "pk": 3,
+        "model": "equipment.Equipment",
+        "fields": {
+            "name": "kettlebell",
+            "other_names": [],
+            "user": 1,
+            "shared_with": [
+                1
+            ]
+        }
+    },
+    {
+        "pk": 4,
+        "model": "equipment.Equipment",
+        "fields": {
+            "name": "resistance band",
+            "other_names": [],
+            "user": 1,
+            "shared_with": [
+                1
+            ]
+        }
+    },
+    {
+        "pk": 5,
+        "model": "equipment.Equipment",
+        "fields": {
+            "name": "pullup bar",
+            "other_names": [],
+            "user": 1,
+            "shared_with": [
+                1
+            ]
+        }
+    },
+    {
+        "pk": 6,
+        "model": "equipment.Equipment",
+        "fields": {
+            "name": "bench",
+            "other_names": [],
+            "user": 1,
+            "shared_with": [
+                1
+            ]
+        }
+    },
+    {
+        "pk": 7,
+        "model": "equipment.Equipment",
+        "fields": {
+            "name": "medicine ball",
+            "other_names": [],
+            "user": 1,
+            "shared_with": [
+                1
+            ]
+        }
+    },
+    {
+        "pk": 8,
+        "model": "equipment.Equipment",
+        "fields": {
+            "name": "EZ bar",
+            "other_names": [],
+            "user": 1,
+            "shared_with": [
+                1
+            ]
+        }
+    },
+    {
+        "pk": 9,
+        "model": "equipment.Equipment",
+        "fields": {
+            "name": "landmine",
+            "other_names": [],
+            "user": 1,
+            "shared_with": [
+                1
+            ]
+        }
+    },
+    {
+        "pk": 10,
+        "model": "equipment.Equipment",
+        "fields": {
+            "name": "cable machine",
+            "other_names": [],
+            "user": 1,
+            "shared_with": [
+                1
+            ]
+        }
+    }
+]
