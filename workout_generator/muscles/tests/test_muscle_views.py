@@ -24,9 +24,12 @@ def test_muscle_list_fail_not_logged_in(api_client):
     assert resp.status_code == 401
 
 
+@pytest.mark.parametrize('auto_login_user, muscle_name', [
+    (None, 'shoulders'),
+    (None, 'lower traps')
+], indirect=['auto_login_user'], ids=['not a subportion', 'is a subportion'])
 @pytest.mark.django_db
-def test_muscle_detail(auto_login_user):
-    muscle_name = 'shoulders'
+def test_muscle_detail(auto_login_user, muscle_name):
     url = reverse('muscle-detail', kwargs={'pk': muscle_name})
     api_client, _ = auto_login_user()
 
