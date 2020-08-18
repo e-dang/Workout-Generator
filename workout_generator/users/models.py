@@ -14,4 +14,4 @@ class User(AbstractUser):
     objects = UserManager()
 
     def __str__(self):
-        return f'Email: {self.email}'
+        return f'{self.email}'
