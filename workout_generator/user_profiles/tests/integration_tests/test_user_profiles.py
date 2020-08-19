@@ -6,7 +6,7 @@ from user_profiles.models import UserProfile
 
 
 @pytest.mark.django_db
-def test_user_profile_auto_create(create_user):
+def test_user_profile_auto_create(global_user, create_user):
     """
     Tests that when a new User is created that it automatically follows the global User instance.
     """
