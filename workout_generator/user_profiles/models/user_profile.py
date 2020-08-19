@@ -12,17 +12,48 @@ class UserProfile(models.Model):
         (UNKNOWN, 'Unspecified')
     )
 
+    PRIVATE = 'pri'
+    PUBLIC = 'pub'
+    PRIVACY = (
+        (PRIVATE, 'Private'),
+        (PUBLIC, 'Public')
+    )
+
     user = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE)
     gender = models.CharField(max_length=1, choices=GENDERS, default=UNKNOWN)
     weight = models.SmallIntegerField(default=-1)
     height = models.SmallIntegerField(default=-1)
     bmi = models.SmallIntegerField(default=-1)
+    visibility = models.CharField(max_length=3, choices=PRIVACY, default=PRIVATE)
     following = models.ManyToManyField(
         'self', related_name='followers', through='Following', symmetrical=False)
+    following_requests = models.ManyToManyField(
+        'self', related_name='follower_requests', through='FollowRequest', symmetrical=False)
 
-    def follow_user(self, user_profile):
+    def make_follow_request(self, user_profile):
+        if user_profile.visibility == self.PUBLIC:
+            self._follow_profile(user_profile)
+        else:
+            self._issue_follow_request(user_profile)
+
+    def handle_follow_request(self, user_profile, accepted):
+        follow_request = self.follower_request.get(requesting_profile=user_profile)
+        if accepted:
+            self._accept_follower(follow_request.requesting_profile)
+        else:
+            follow_request.delete()
+
+    def _follow_profile(self, user_profile):
         self.following.add(user_profile)
         user_profile.followers.add(self)
+
+    def _issue_follow_request(self, user_profile):
+        self.following_requests.add(user_profile)
+        user_profile.follower_requests.add(self)
+
+    def _accept_follower(self, user_profile):
+        self.followers.add(user_profile)
+        user_profile.following.add(self)
 
     def __str__(self):
         return str(self.user)
