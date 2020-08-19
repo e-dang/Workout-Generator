@@ -9,7 +9,7 @@ class Following(models.Model):
 
     class Meta:
         unique_together = ('following_user', 'followed_user')
-        ordering = ['-created']
+        ordering = ('-created', )
 
     def __str__(self):
         return f'{str(self.following_user.user)} follows {str(self.followed_user.user)}'
