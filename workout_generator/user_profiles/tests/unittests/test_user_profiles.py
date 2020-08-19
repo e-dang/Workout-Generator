@@ -1,7 +1,7 @@
 import pytest
-import mock
 
 from user_profiles.models import UserProfile, Following, FollowRequest
+from django.db.utils import IntegrityError
 
 
 @pytest.mark.django_db
@@ -132,3 +132,13 @@ def test_user_profile_deleted_on_user_delete(create_user_no_follow):
     assert len(UserProfile.objects.all()) == user_profile_before - 1
     assert len(Following.objects.all()) == 0
     assert len(FollowRequest.objects.all()) == follow_request_before - 1
+
+
+@pytest.mark.django_db
+def test_unique_together_constraint_following(create_user_no_follow):
+    user1 = create_user_no_follow()
+    user2 = create_user_no_follow(email='JaneDoe@demo.com')
+    Following.objects.create(following_user=user1.profile, followed_user=user2.profile)
+
+    with pytest.raises(IntegrityError):
+        Following.objects.create(following_user=user1.profile, followed_user=user2.profile)
