@@ -37,11 +37,15 @@ class UserProfile(models.Model):
             self._issue_follow_request(user_profile)
 
     def handle_follow_request(self, user_profile, accepted):
-        follow_request = self.follower_request.get(requesting_profile=user_profile)
-        if accepted:
-            self._accept_follower(follow_request.requesting_profile)
+        try:
+            follower_request = self.follower_requests.get(requesting_profile=user_profile, target_profile=self)
+        except self.following_requests.model.DoesNotExist:
+            pass
         else:
-            follow_request.delete()
+            if accepted:
+                self._accept_follower_request(follower_request)
+
+            follower_request.delete()
 
     def _follow_profile(self, user_profile):
         self.following.add(user_profile)
@@ -51,9 +55,11 @@ class UserProfile(models.Model):
         self.following_requests.add(user_profile)
         user_profile.follower_requests.add(self)
 
-    def _accept_follower(self, user_profile):
-        self.followers.add(user_profile)
-        user_profile.following.add(self)
+    def _accept_follower_request(self, follower_request):
+        if follower_request.target_profile == self:
+            user_profile = follower_request.requesting_profile
+            self.followers.add(user_profile)
+            user_profile.following.add(self)
 
     def __str__(self):
         return str(self.user)
