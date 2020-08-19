@@ -16,6 +16,14 @@ def split_dict_on_model_attrs(model, kwargs):
     return extras
 
 
+def create_attr_string(base_attr):
+    try:
+        return '_' + str(base_attr)
+    except TypeError:
+        raise TypeError(
+            f'Invalid type {type(base_attr)} for a base attribute name - The base attribute name must be castable to a string')
+
+
 def apply_attrs_to_model(model, kwargs, force=False):
     if model is None:
         raise ValueError('Cannot apply attributes to None')
@@ -23,7 +31,7 @@ def apply_attrs_to_model(model, kwargs, force=False):
         return model
 
     for key, value in kwargs.items():
-        attr = '_' + str(key)
+        attr = create_attr_string(key)
         if not hasattr(model, attr) or force:
             setattr(model, attr, value)
         else:

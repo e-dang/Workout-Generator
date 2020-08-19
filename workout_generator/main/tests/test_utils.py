@@ -19,6 +19,16 @@ def test_split_dict_on_model_attrs(model, kwargs, expected_kwargs, expected_extr
     assert extras == expected_extras
 
 
+@pytest.mark.parametrize('base_attr, expected', [
+    ('s', '_s'),
+    (1, '_1')
+], ids=['string', 'int'])
+def test_create_attr_string(base_attr, expected):
+    result = utils.create_attr_string(base_attr)
+
+    assert result == expected
+
+
 @pytest.mark.parametrize('model, kwargs, force', [
     (namedtuple('Test', 'x y c'), {'z': 3}, False),
     (namedtuple('Test', 'x y c'), {'x': 3}, True),
@@ -30,7 +40,7 @@ def test_apply_attrs_to_model(model, kwargs, force):
     new_model = utils.apply_attrs_to_model(model, kwargs, force=force)
 
     for key, value in kwargs.items():
-        attr = '_' + str(key)
+        attr = utils.create_attr_string(key)
         assert hasattr(new_model, attr)
         assert getattr(new_model, attr) == value
 
