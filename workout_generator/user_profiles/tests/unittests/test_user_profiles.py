@@ -110,3 +110,25 @@ def test_handle_follow_request_invalid_request(create_user_no_follow, accepted):
     assert profile1 not in profile2.following.all()
     assert profile1 not in profile2.followers.all()
     assert len(FollowRequest.objects.all()) == 1
+
+
+@pytest.mark.django_db
+def test_user_profile_deleted_on_user_delete(create_user_no_follow):
+    """
+    Tests that when a User is deleted so is their associated UserProfile, Following entries, and FollowRequests.
+    """
+
+    user1 = create_user_no_follow()
+    user2 = create_user_no_follow(email='JaneDoe@demo.com')
+    user3 = create_user_no_follow(email='test@demo.com')
+    user1.profile.followers.add(user3.profile)
+    user3.profile.following.add(user1.profile)
+    FollowRequest.objects.create(requesting_profile=user1.profile, target_profile=user2.profile)
+    user_profile_before = len(UserProfile.objects.all())
+    follow_request_before = len(FollowRequest.objects.all())
+
+    user1.delete()
+
+    assert len(UserProfile.objects.all()) == user_profile_before - 1
+    assert len(Following.objects.all()) == 0
+    assert len(FollowRequest.objects.all()) == follow_request_before - 1
