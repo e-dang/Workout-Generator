@@ -1,7 +1,13 @@
 import pytest
-
-from rest_framework.test import APIClient
+from django.core.management import call_command
 from rest_framework.authtoken.models import Token
+from rest_framework.test import APIClient
+
+
+@pytest.fixture(scope='session')
+def django_db_setup(django_db_setup, django_db_blocker):
+    with django_db_blocker.unblock():
+        call_command('init_muscles')
 
 
 @pytest.fixture
