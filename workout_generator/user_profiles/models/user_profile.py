@@ -12,10 +12,17 @@ class UserProfile(models.Model):
         (UNKNOWN, 'Unspecified')
     )
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE)
     gender = models.CharField(max_length=1, choices=GENDERS, default=UNKNOWN)
-    weight = models.PositiveSmallIntegerField()
-    height = models.PositiveSmallIntegerField()
-    bmi = models.PositiveSmallIntegerField()
-    followers = models.ManyToManyField('self', related_name='followers', through='Followers', symmetrical=False)
-    following = models.ManyToManyField('self', related_name='follows', through='Following', symmetrical=False)
+    weight = models.SmallIntegerField(default=-1)
+    height = models.SmallIntegerField(default=-1)
+    bmi = models.SmallIntegerField(default=-1)
+    following = models.ManyToManyField(
+        'self', related_name='followers', through='Following', symmetrical=False)
+
+    def follow_user(self, user_profile):
+        self.following.add(user_profile)
+        user_profile.followers.add(self)
+
+    def __str__(self):
+        return str(self.user)
