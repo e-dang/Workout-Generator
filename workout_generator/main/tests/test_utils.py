@@ -1,5 +1,6 @@
 from collections import namedtuple
 
+import mock
 import pytest
 
 from main import utils
@@ -7,7 +8,7 @@ from main import utils
 
 @pytest.mark.parametrize('model, kwargs, expected_kwargs, expected_extras', [
     (namedtuple('Test', 'x y c'), {'x': 1, 'a': 1, '2': 1}, {'x': 1}, {'a': 1, '2': 1}),
-    (namedtuple('Test', ''), {'x': 1, 'a': 1, '2': 1}, {}, {'x': 1, 'a': 1, '2': 1}),
+    (namedtuple('BlankTest', ''), {'x': 1, 'a': 1, '2': 1}, {}, {'x': 1, 'a': 1, '2': 1}),
     (None, {'x': 1, 'a': 1, '2': 1}, {}, {'x': 1, 'a': 1, '2': 1}),
     (namedtuple('Test', 'x y c'), {}, {}, {})
 ],
@@ -60,3 +61,32 @@ def test_apply_attrs_to_model_fail(model, kwargs, force):
 
     with pytest.raises(ValueError):
         _ = utils.apply_attrs_to_model(model, kwargs, force=force)
+
+
+@pytest.mark.parametrize('model, extra_fields, expected', [
+    (mock.MagicMock, ['x', 'y'], {'x': 1, 'y': 2}),
+    (mock.MagicMock, [], {}),
+    (mock.MagicMock, ['a', 'b'], {})
+],
+    ids=['with fields to extract', 'no fields to extract', 'no extra fields to extract'])
+def test_extract_extra_fields_from_model(model, extra_fields, expected):
+    model._x = 1
+    model._y = 2
+    model._z = 3
+
+    result = utils.extract_extra_fields_from_model(model, extra_fields)
+
+    assert result == expected
+
+
+@pytest.mark.parametrize('model, extra_fields', [
+    (None, ['x', 'y']),
+    (None, []),
+    (1, ['x', 'y']),
+    (1, [])
+],
+    ids=['None with fields to extract', 'None no fields to extract',
+         'no __dict__ with fields to extract', 'no __dict__ with no fields to extract'])
+def test_extract_extra_fields_from_model_fail(model, extra_fields):
+    with pytest.raises(ValueError):
+        _ = utils.extract_extra_fields_from_model(model, extra_fields)

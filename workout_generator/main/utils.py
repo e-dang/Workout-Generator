@@ -38,3 +38,22 @@ def apply_attrs_to_model(model, kwargs, force=False):
             raise ValueError(f'The model already has the attribute {attr}. To override attributes set force = True.')
 
     return model
+
+
+def extract_extra_fields_from_model(model, extra_fields):
+    if model is None or not hasattr(model, '__dict__'):
+        raise ValueError('Cannot extract attributes from None')
+    elif len(extra_fields) == 0:
+        return {}
+
+    # get hashed attributes
+    hashed_attrs = model.__dict__
+
+    extracted_attrs = {}
+    for extra_field in extra_fields:
+        desired_attr = create_attr_string(extra_field)
+        value = hashed_attrs.get(desired_attr, None)
+        if value is not None:
+            extracted_attrs[str(extra_field)] = value
+
+    return extracted_attrs
