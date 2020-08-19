@@ -142,3 +142,13 @@ def test_unique_together_constraint_following(create_user_no_follow):
 
     with pytest.raises(IntegrityError):
         Following.objects.create(following_user=user1.profile, followed_user=user2.profile)
+
+
+@pytest.mark.django_db
+def test_unique_together_constraint_follow_request(create_user_no_follow):
+    user1 = create_user_no_follow()
+    user2 = create_user_no_follow(email='JaneDoe@demo.com')
+    FollowRequest.objects.create(requesting_profile=user1.profile, target_profile=user2.profile)
+
+    with pytest.raises(IntegrityError):
+        FollowRequest.objects.create(requesting_profile=user1.profile, target_profile=user2.profile)
