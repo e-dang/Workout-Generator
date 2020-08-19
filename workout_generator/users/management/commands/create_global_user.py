@@ -3,6 +3,7 @@ import os
 from django.core.management.base import BaseCommand, CommandError
 
 from users.models import User
+from user_profiles.models import UserProfile
 
 
 class Command(BaseCommand):
@@ -21,5 +22,5 @@ class Command(BaseCommand):
         except User.DoesNotExist:
             pass
 
-        User.objects.create_user(email=global_email, password=global_password)
+        User.objects.create_user(email=global_email, password=global_password, visibility=UserProfile.PUBLIC)
         self.stdout.write(self.style.SUCCESS('Successfully created the global User instance!'))
