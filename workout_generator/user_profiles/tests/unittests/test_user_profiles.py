@@ -5,14 +5,14 @@ from django.db.utils import IntegrityError
 
 
 @pytest.mark.django_db
-def test_make_follow_request_public(create_user_no_follow):
+def test_make_follow_request_public(create_user):
     """
     Tests that the instance method make_follow_request() correctly places the profiles in the following field of each
     profile when the followed User has public visibility.
     """
 
-    user1 = create_user_no_follow()
-    user2 = create_user_no_follow(email='JaneDoe@demo.com', visibility=UserProfile.PUBLIC)
+    user1 = create_user()
+    user2 = create_user(email='JaneDoe@demo.com', visibility=UserProfile.PUBLIC)
     profile1 = user1.profile
     profile2 = user2.profile
 
@@ -25,14 +25,14 @@ def test_make_follow_request_public(create_user_no_follow):
 
 
 @pytest.mark.django_db
-def test_make_follow_request_private(create_user_no_follow):
+def test_make_follow_request_private(create_user):
     """
     Tests that the instance method make_follow_request() correctly issues a FollowRequest when the followed User has
     private visibility.
     """
 
-    user1 = create_user_no_follow()
-    user2 = create_user_no_follow(email='JaneDoe@demo.com')
+    user1 = create_user()
+    user2 = create_user(email='JaneDoe@demo.com')
     profile1 = user1.profile
     profile2 = user2.profile
 
@@ -48,22 +48,22 @@ def test_make_follow_request_private(create_user_no_follow):
     assert profile2 not in profile1.follower_requests.all()
 
 
-@pytest.mark.parametrize('create_user_no_follow, accepted', [
+@pytest.mark.parametrize('create_user, accepted', [
     (None, True),
     (None, False)
 ],
-    indirect=['create_user_no_follow'],
+    indirect=['create_user'],
     ids=['accepted', 'not accepted'])
 @pytest.mark.django_db
-def test_handle_follow_request(create_user_no_follow, accepted):
+def test_handle_follow_request(create_user, accepted):
     """
     Tests that the instance method handle_follower_request() correctly places the profiles in the following field of
     each profile when the request has been accepted, does nothing when the request has been rejected, and deletes
     the request in either case.
     """
 
-    user1 = create_user_no_follow()
-    user2 = create_user_no_follow(email='JaneDoe@demo.com')
+    user1 = create_user()
+    user2 = create_user(email='JaneDoe@demo.com')
     profile1 = user1.profile
     profile2 = user2.profile
     follower_request = FollowRequest.objects.create(requesting_profile=profile2, target_profile=profile1)
@@ -84,21 +84,21 @@ def test_handle_follow_request(create_user_no_follow, accepted):
     assert len(FollowRequest.objects.all()) == 0
 
 
-@pytest.mark.parametrize('create_user_no_follow, accepted', [
+@pytest.mark.parametrize('create_user, accepted', [
     (None, True),
     (None, False)
 ],
-    indirect=['create_user_no_follow'],
+    indirect=['create_user'],
     ids=['accepted', 'not accepted'])
 @pytest.mark.django_db
-def test_handle_follow_request_invalid_request(create_user_no_follow, accepted):
+def test_handle_follow_request_invalid_request(create_user, accepted):
     """
     Tests that the instance method handle_follower_request() does nothing when a follower_request not belonging to the
     calling instance is passed to method.
     """
 
-    user1 = create_user_no_follow()
-    user2 = create_user_no_follow(email='JaneDoe@demo.com')
+    user1 = create_user()
+    user2 = create_user(email='JaneDoe@demo.com')
     profile1 = user1.profile
     profile2 = user2.profile
     follower_request = FollowRequest.objects.create(requesting_profile=profile1, target_profile=profile2)
@@ -113,14 +113,14 @@ def test_handle_follow_request_invalid_request(create_user_no_follow, accepted):
 
 
 @pytest.mark.django_db
-def test_user_profile_deleted_on_user_delete(create_user_no_follow):
+def test_user_profile_deleted_on_user_delete(create_user):
     """
     Tests that when a User is deleted so is their associated UserProfile, Following entries, and FollowRequests.
     """
 
-    user1 = create_user_no_follow()
-    user2 = create_user_no_follow(email='JaneDoe@demo.com')
-    user3 = create_user_no_follow(email='test@demo.com')
+    user1 = create_user()
+    user2 = create_user(email='JaneDoe@demo.com')
+    user3 = create_user(email='test@demo.com')
     user1.profile.followers.add(user3.profile)
     user3.profile.following.add(user1.profile)
     FollowRequest.objects.create(requesting_profile=user1.profile, target_profile=user2.profile)
@@ -135,9 +135,9 @@ def test_user_profile_deleted_on_user_delete(create_user_no_follow):
 
 
 @pytest.mark.django_db
-def test_unique_together_constraint_following(create_user_no_follow):
-    user1 = create_user_no_follow()
-    user2 = create_user_no_follow(email='JaneDoe@demo.com')
+def test_unique_together_constraint_following(create_user):
+    user1 = create_user()
+    user2 = create_user(email='JaneDoe@demo.com')
     Following.objects.create(following_user=user1.profile, followed_user=user2.profile)
 
     with pytest.raises(IntegrityError):
@@ -145,9 +145,9 @@ def test_unique_together_constraint_following(create_user_no_follow):
 
 
 @pytest.mark.django_db
-def test_unique_together_constraint_follow_request(create_user_no_follow):
-    user1 = create_user_no_follow()
-    user2 = create_user_no_follow(email='JaneDoe@demo.com')
+def test_unique_together_constraint_follow_request(create_user):
+    user1 = create_user()
+    user2 = create_user(email='JaneDoe@demo.com')
     FollowRequest.objects.create(requesting_profile=user1.profile, target_profile=user2.profile)
 
     with pytest.raises(IntegrityError):

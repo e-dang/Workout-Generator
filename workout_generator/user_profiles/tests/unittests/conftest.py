@@ -5,7 +5,7 @@ from user_profiles.models import UserProfile
 
 
 @pytest.fixture
-def create_user_no_follow(db, django_user_model, test_password):
+def create_user(db, django_user_model, test_password):
     func = UserProfile.objects.create
 
     def side_effect(*args, **kwargs):
