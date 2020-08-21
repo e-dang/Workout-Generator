@@ -33,9 +33,9 @@ def auto_login_user(db, api_client, create_user):
     Taken from https://djangostars.com/blog/django-pytest-testing/
     """
 
-    def make_auto_login(user=None):
+    def make_auto_login(user=None, **kwargs):
         if user is None:
-            user = create_user()
+            user = create_user(**kwargs)
         token, _ = Token.objects.get_or_create(user=user)
         api_client.credentials(HTTP_AUTHORIZATION=f'Token {token.key}')
         return api_client, user
