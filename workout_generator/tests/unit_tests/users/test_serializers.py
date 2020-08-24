@@ -57,6 +57,12 @@ def test_register_serializer_validate_name_fail(method, err_msg, name):
     assert err_msg in str(err.value).lower().replace(' ', '')
 
 
+def test_register_serializer_doesnt_have_username():
+    serializer = RegisterSerializer()
+
+    assert 'username' not in serializer.get_fields()
+
+
 @pytest.mark.parametrize('validated_data, expected', [
     ({'first_name': 'John', 'last_name': 'Doe'}, {'email': 'JohnDoe@demo.com',
                                                   'password': 'password123', 'first_name': 'John', 'last_name': 'Doe'}),
