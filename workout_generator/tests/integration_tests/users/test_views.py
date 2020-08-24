@@ -153,7 +153,7 @@ def test_user_delete(auto_login_user):
 
 
 @pytest.mark.django_db
-def test_user_delete_fail(auto_login_user):
+def test_user_delete_fail_invalid_credentials(auto_login_user):
     url = reverse('delete-user')
     api_client, _ = auto_login_user()
     before = len(User.objects.all())
@@ -163,7 +163,21 @@ def test_user_delete_fail(auto_login_user):
 
     assert resp.status_code == 401
     assert len(User.objects.all()) == before
-    assert 'Invalid token.' in resp.data['detail']
+    assert resp.data['detail'].code == 'authentication_failed'
+
+
+@pytest.mark.django_db
+def test_user_delete_fail_not_logged_in(auto_login_user):
+    url = reverse('delete-user')
+    api_client, _ = auto_login_user()
+    before = len(User.objects.all())
+    api_client.credentials()
+
+    resp = api_client.delete(url)
+
+    assert resp.status_code == 401
+    assert len(User.objects.all()) == before
+    assert resp.data['detail'].code == 'not_authenticated'
 
 
 @pytest.mark.django_db
