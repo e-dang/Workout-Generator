@@ -46,7 +46,7 @@ def test_logout(auto_login_user):
 
 
 @pytest.mark.django_db
-def test_logout_fail(auto_login_user):
+def test_logout_fail_invalid_credentials(auto_login_user):
     url = reverse('rest_logout')
     api_client, _ = auto_login_user()
     invalidate_credentials(api_client)
@@ -56,6 +56,19 @@ def test_logout_fail(auto_login_user):
     assert resp.status_code == 401
     assert len(resp.data) == 1
     assert 'Invalid token.' in resp.data['detail']
+    assert len(Token.objects.all()) == 1
+
+
+@pytest.mark.django_db
+def test_logout_not_logged_in(auto_login_user):
+    url = reverse('rest_logout')
+    api_client, _ = auto_login_user()
+    api_client.credentials()
+
+    resp = api_client.post(url)
+
+    assert resp.status_code == 200
+    assert len(resp.data) == 1
     assert len(Token.objects.all()) == 1
 
 
