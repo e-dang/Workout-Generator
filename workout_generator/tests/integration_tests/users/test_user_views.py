@@ -4,6 +4,8 @@ from rest_framework.reverse import reverse
 from rest_framework.authtoken.models import Token
 from users.models import User
 
+pytestmark = pytest.mark.usefixtures('global_user')
+
 
 def invalidate_credentials(api_client):
     api_client.credentials(HTTP_AUTHORIZATION='Token INVALID_TOKEN')
@@ -67,13 +69,14 @@ def test_logout_fail(auto_login_user):
 @pytest.mark.django_db
 def test_registration(api_client, data):
     url = reverse('rest_register')
+    before = len(User.objects.all())
 
     resp = api_client.post(url, data)
 
     assert resp.status_code == 201
     user = User.objects.get(email=data['email'])
     assert user
-    assert len(User.objects.all()) == 1
+    assert len(User.objects.all()) == before + 1
     assert resp.data['key'] == Token.objects.get(user=user.id).key
 
 
@@ -128,23 +131,25 @@ def test_registration_fail_duplicate_email(api_client):
 def test_user_delete(auto_login_user):
     url = reverse('delete-user')
     api_client, _ = auto_login_user()
+    before = len(User.objects.all())
 
     resp = api_client.delete(url)
 
     assert resp.status_code == 204
-    assert len(User.objects.all()) == 0
+    assert len(User.objects.all()) == before - 1
 
 
 @pytest.mark.django_db
 def test_user_delete_fail(auto_login_user):
     url = reverse('delete-user')
     api_client, _ = auto_login_user()
+    before = len(User.objects.all())
     invalidate_credentials(api_client)
 
     resp = api_client.delete(url)
 
     assert resp.status_code == 401
-    assert len(User.objects.all()) == 1
+    assert len(User.objects.all()) == before
     assert 'Invalid token.' in resp.data['detail']
 
 

@@ -2,6 +2,7 @@ import pytest
 
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
+from django.core.management import call_command
 
 
 @pytest.fixture
@@ -41,3 +42,24 @@ def auto_login_user(db, api_client, create_user):
         return api_client, user
 
     return make_auto_login
+
+
+@pytest.fixture
+def auto_login_profile(auto_login_user):
+    def convert_user_to_profile(**kwargs):
+        kwargs['weight'] = kwargs.get('weight', 160)
+        kwargs['height'] = kwargs.get('height', 60)
+        kwargs['bmi'] = kwargs.get('bmi', 12)
+        api_client, user = auto_login_user(**kwargs)
+        return api_client, user.profile
+    return convert_user_to_profile
+
+
+@pytest.fixture
+def global_user(db):
+    call_command('create_global_user')
+
+
+@pytest.fixture
+def init_muscles(db):
+    call_command('init_muscles')
