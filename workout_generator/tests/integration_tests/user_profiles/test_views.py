@@ -2,6 +2,8 @@ import pytest
 
 from rest_framework.reverse import reverse
 
+pytestmark = pytest.mark.usefixtures('global_user')
+
 
 @pytest.mark.django_db
 def test_user_profile_detail(auto_login_profile):
