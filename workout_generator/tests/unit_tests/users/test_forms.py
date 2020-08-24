@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from users.forms import UserCreationForm, UserChangeForm
 from users.models import User
 from django import forms
+from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
 
 @pytest.mark.parametrize('field_name, label', [
@@ -86,3 +87,28 @@ def test_user_creation_form_save(commit):
             mock_user.save.assert_called_once()
         else:
             mock_user.save.assert_not_called()
+
+
+def test_user_change_form_password_field_is_read_only_hashed():
+    form = UserChangeForm()
+
+    assert isinstance(form.fields['password'], ReadOnlyPasswordHashField)
+
+
+def test_user_change_form_model_is_expected():
+    form = UserChangeForm()
+
+    assert form.Meta.model is User
+
+
+def test_user_change_form_meta_fields():
+    form = UserChangeForm()
+
+    assert form.Meta.fields == ('email', 'password', 'first_name', 'last_name')
+
+
+def test_user_change_form_clean_password():
+    mock_form = mock.MagicMock(spec=UserChangeForm)
+    mock_form.initial = {'password': 'password123'}
+
+    assert UserChangeForm.clean_password(mock_form) == 'password123'
