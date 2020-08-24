@@ -4,7 +4,7 @@ import rest_auth.registration.serializers as reg_serializers
 from rest_framework.serializers import ValidationError
 
 from users.models import User
-from users.serializers import RegisterSerializer, UserSerializer
+from users.serializers import RegisterSerializer, UserSerializer, LoginSerializer
 
 
 def test_user_serializer_meta_model():
@@ -97,3 +97,9 @@ def test_register_serializer_save():
         mock_setup_email.assert_called_once_with(mock_request, mock_user, [])
         mock_user.save.assert_called_once()
         assert user is mock_user
+
+
+def test_login_serializer_doesnt_have_username():
+    serializer = LoginSerializer()
+
+    assert 'username' not in serializer.get_fields()
