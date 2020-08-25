@@ -398,7 +398,7 @@ def test_password_reset_request(auto_login_user, logout):
 
 
 @pytest.mark.django_db
-def test_password_reset_request_fail_mismatch_credentials(auto_login_user):
+def test_password_reset_request_fail_invalid_credentials(auto_login_user):
     url = reverse('rest_password_reset')
     api_client, user = auto_login_user()
     invalidate_credentials(api_client)
@@ -431,7 +431,7 @@ def test_password_reset_confirm(auto_login_user, logout):
 
 
 @pytest.mark.django_db
-def test_password_reset_confirm_fail_mismatch_credentials(auto_login_user):
+def test_password_reset_confirm_fail_invalid_credentials(auto_login_user):
     url = reverse('rest_password_reset')
     api_client, user = auto_login_user()
     resp = api_client.post(url, {'email': user.email})
