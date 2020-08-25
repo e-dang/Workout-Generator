@@ -7,6 +7,45 @@ from django.core.management import call_command
 from user_profiles.models import UserProfile
 
 
+class UserGenerator:
+    def __init__(self, db, django_user_model, test_password, request):
+        self.db = db
+        self.django_user_model = django_user_model
+        self.test_password = test_password
+        self.method = getattr(request, 'param', False)
+        self.count = 0
+
+    def get_factory_method(self):
+        if self.method:
+            return self.create_user_no_auto_follow
+        else:
+            return self.create_user
+
+    def get_next_email(self):
+        self.count += 1
+        return f'JohnDoe{self.count - 1}@demo.com'
+
+    def create_user(self, **kwargs):
+        kwargs['email'] = kwargs.get('email', self.get_next_email())
+        kwargs['password'] = self.test_password
+        return self.django_user_model.objects.create_user(**kwargs)
+
+    def create_user_no_auto_follow(self, **kwargs):
+        func = UserProfile.objects.create
+
+        def side_effect(*args, **kwargs):
+            func(*args, **kwargs)
+            return mock.DEFAULT
+
+        kwargs['email'] = kwargs.get('email', self.get_next_email())
+        kwargs['password'] = self.test_password
+        with mock.patch('user_profiles.signals.UserProfile.objects.create') as mock_create, \
+                mock.patch('user_profiles.signals.UserProfile.objects.get'):
+            mock_create.return_value = mock.MagicMock()
+            mock_create.side_effect = side_effect
+            return self.django_user_model.objects.create_user(**kwargs)
+
+
 @pytest.fixture
 def api_client():
     return APIClient()
@@ -19,31 +58,7 @@ def test_password():
 
 @pytest.fixture
 def create_user(db, django_user_model, test_password, request):
-    """
-    Idea taken from https://djangostars.com/blog/django-pytest-testing/
-    """
-
-    def make_user(**kwargs):
-        kwargs['email'] = kwargs.get('email', 'JohnDoe@demo.com')
-        kwargs['password'] = test_password
-        return django_user_model.objects.create_user(**kwargs)
-
-    func = UserProfile.objects.create
-
-    def side_effect(*args, **kwargs):
-        func(*args, **kwargs)
-        return mock.DEFAULT
-
-    def make_user_no_auto_follow(**kwargs):
-        kwargs['email'] = kwargs.get('email', 'JohnDoe@demo.com')
-        kwargs['password'] = test_password
-        with mock.patch('user_profiles.signals.UserProfile.objects.create') as mock_create, \
-                mock.patch('user_profiles.signals.UserProfile.objects.get'):
-            mock_create.return_value = mock.MagicMock()
-            mock_create.side_effect = side_effect
-            return django_user_model.objects.create_user(**kwargs)
-
-    return make_user_no_auto_follow if getattr(request, 'param', False) else make_user
+    return UserGenerator(db, django_user_model, test_password, request).get_factory_method()
 
 
 @pytest.fixture
