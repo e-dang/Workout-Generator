@@ -2,6 +2,7 @@ import pytest
 
 from user_profiles.models import UserProfile, Following, FollowRequest
 from django.db.utils import IntegrityError
+from user_profiles.exceptions import InvalidFollowRequest
 
 
 @pytest.mark.django_db
@@ -103,7 +104,8 @@ def test_handle_follow_request_invalid_request(create_user, accepted):
     profile2 = user2.profile
     follower_request = FollowRequest.objects.create(requesting_profile=profile1, target_profile=profile2)
 
-    profile1.handle_follow_request(follower_request, accepted)
+    with pytest.raises(InvalidFollowRequest):
+        profile1.handle_follow_request(follower_request, accepted)
 
     assert profile2 not in profile1.followers.all()
     assert profile2 not in profile1.following.all()
