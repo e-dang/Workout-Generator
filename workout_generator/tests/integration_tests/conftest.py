@@ -1,8 +1,10 @@
 import pytest
+import mock
 
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 from django.core.management import call_command
+from user_profiles.models import UserProfile
 
 
 @pytest.fixture
@@ -16,16 +18,32 @@ def test_password():
 
 
 @pytest.fixture
-def create_user(db, django_user_model, test_password):
+def create_user(db, django_user_model, test_password, request):
     """
-    Taken from https://djangostars.com/blog/django-pytest-testing/
+    Idea taken from https://djangostars.com/blog/django-pytest-testing/
     """
 
     def make_user(**kwargs):
         kwargs['email'] = kwargs.get('email', 'JohnDoe@demo.com')
         kwargs['password'] = test_password
         return django_user_model.objects.create_user(**kwargs)
-    return make_user
+
+    func = UserProfile.objects.create
+
+    def side_effect(*args, **kwargs):
+        func(*args, **kwargs)
+        return mock.DEFAULT
+
+    def make_user_no_auto_follow(**kwargs):
+        kwargs['email'] = kwargs.get('email', 'JohnDoe@demo.com')
+        kwargs['password'] = test_password
+        with mock.patch('user_profiles.signals.UserProfile.objects.create') as mock_create, \
+                mock.patch('user_profiles.signals.UserProfile.objects.get'):
+            mock_create.return_value = mock.MagicMock()
+            mock_create.side_effect = side_effect
+            return django_user_model.objects.create_user(**kwargs)
+
+    return make_user_no_auto_follow if getattr(request, 'param', False) else make_user
 
 
 @pytest.fixture
