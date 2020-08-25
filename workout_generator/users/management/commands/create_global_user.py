@@ -22,5 +22,6 @@ class Command(BaseCommand):
         except User.DoesNotExist:
             pass
 
-        User.objects.create_user(email=global_email, password=global_password, visibility=UserProfile.PUBLIC)
+        User.objects.create_superuser(email=global_email, password=global_password,
+                                      visibility=UserProfile.PUBLIC)
         self.stdout.write(self.style.SUCCESS('Successfully created the global User instance!'))
