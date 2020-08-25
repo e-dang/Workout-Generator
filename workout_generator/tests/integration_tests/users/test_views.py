@@ -287,7 +287,7 @@ def test_user_detail_patch(auto_login_user):
 
 
 @pytest.mark.django_db
-def test_user_detail_patch_fail_not_logged_in(auto_login_user):
+def test_user_detail_patch_fail_invalid_credentials(auto_login_user):
     url = reverse('rest_user_details')
     api_client, _ = auto_login_user()
     invalidate_credentials(api_client)
@@ -296,7 +296,20 @@ def test_user_detail_patch_fail_not_logged_in(auto_login_user):
     resp = api_client.patch(url, data)
 
     assert resp.status_code == 401
-    assert 'Invalid token.' in resp.data['detail']
+    assert resp.data['detail'].code == 'authentication_failed'
+
+
+@pytest.mark.django_db
+def test_user_detail_patch_fail_not_logged_in(auto_login_user):
+    url = reverse('rest_user_details')
+    api_client, _ = auto_login_user()
+    api_client.credentials()
+    data = {'first_name': 'new_first_name', 'last_name': 'new_last_name'}
+
+    resp = api_client.patch(url, data)
+
+    assert resp.status_code == 401
+    assert resp.data['detail'].code == 'not_authenticated'
 
 
 @pytest.mark.django_db
