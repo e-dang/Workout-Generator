@@ -39,7 +39,7 @@ class UserProfile(models.Model):
 
     def handle_follow_request(self, follower_request, accepted):
         if follower_request.target_profile != self:
-            raise InvalidFollowRequest
+            raise InvalidFollowRequest('The given FollowRequest does not belong to this UserProfile!')
 
         if accepted:
             Following.objects.create(following_user=follower_request.requesting_profile, followed_user=self)
