@@ -48,7 +48,7 @@
     //     5000
     // ],
     // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "pip3 install --user -r requirements.txt && sudo apt-get update && export DEBIAN_FRONTEND=noninteractive && sudo apt-get -y install --no-install-recommends vim"
+    "postCreateCommand": "pip3 install --user -r requirements.txt"
     // Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
     // "remoteUser": "vscode"
 }
