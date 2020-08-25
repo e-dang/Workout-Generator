@@ -1,6 +1,6 @@
 import pytest
 import mock
-from user_profiles.permissions import IsOwner, IsAdmin
+from main.permissions import IsOwner, IsAdmin
 
 
 def test_is_owner_has_object_permission():
