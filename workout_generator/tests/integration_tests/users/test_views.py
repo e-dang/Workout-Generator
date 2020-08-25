@@ -326,7 +326,7 @@ def test_user_change_password(auto_login_user, test_password):
 
 
 @pytest.mark.django_db
-def test_user_change_password_fail_not_logged_in(auto_login_user, test_password):
+def test_user_change_password_fail_invalid_credentials(auto_login_user, test_password):
     url = reverse('rest_password_change')
     api_client, _ = auto_login_user()
     invalidate_credentials(api_client)
@@ -336,7 +336,21 @@ def test_user_change_password_fail_not_logged_in(auto_login_user, test_password)
     resp = api_client.post(url, data)
 
     assert resp.status_code == 401
-    assert 'Invalid token.' in resp.data['detail']
+    assert resp.data['detail'].code == 'authentication_failed'
+
+
+@pytest.mark.django_db
+def test_user_change_password_fail_not_logged_in(auto_login_user, test_password):
+    url = reverse('rest_password_change')
+    api_client, _ = auto_login_user()
+    api_client.credentials()
+    new_password = 'thisisanewpassword123'
+    data = {'new_password1': new_password, 'new_password2': new_password, 'old_password': test_password}
+
+    resp = api_client.post(url, data)
+
+    assert resp.status_code == 401
+    assert resp.data['detail'].code == 'not_authenticated'
 
 
 @pytest.mark.parametrize('auto_login_user, test_password, data, error_field', [
