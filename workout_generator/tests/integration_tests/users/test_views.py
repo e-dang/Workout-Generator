@@ -194,7 +194,7 @@ def test_user_detail_get(auto_login_user):
 
 
 @pytest.mark.django_db
-def test_user_detail_get_fail_not_logged_in(auto_login_user):
+def test_user_detail_get_fail_invalid_credentials(auto_login_user):
     url = reverse('rest_user_details')
     api_client, _ = auto_login_user()
     invalidate_credentials(api_client)
@@ -202,7 +202,19 @@ def test_user_detail_get_fail_not_logged_in(auto_login_user):
     resp = api_client.get(url)
 
     assert resp.status_code == 401
-    assert 'Invalid token.' in resp.data['detail']
+    assert resp.data['detail'].code == 'authentication_failed'
+
+
+@pytest.mark.django_db
+def test_user_detail_get_fail_not_logged_in(auto_login_user):
+    url = reverse('rest_user_details')
+    api_client, _ = auto_login_user()
+    api_client.credentials()
+
+    resp = api_client.get(url)
+
+    assert resp.status_code == 401
+    assert resp.data['detail'].code == 'not_authenticated'
 
 
 @pytest.mark.django_db
