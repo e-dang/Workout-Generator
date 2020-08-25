@@ -4,7 +4,6 @@ import mock
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 from django.core.management import call_command
-from workout_generator.urls import PREFIX_API_URL
 from user_profiles.models import UserProfile
 
 
@@ -82,7 +81,3 @@ def global_user(db):
 @pytest.fixture
 def init_muscles(db):
     call_command('init_muscles')
-
-
-def add_api_prefix(suburl):
-    return f'/{PREFIX_API_URL}{suburl}'
