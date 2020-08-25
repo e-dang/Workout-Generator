@@ -1,10 +1,14 @@
 import pytest
+import os
 
 from user_profiles.models import UserProfile, Following, FollowRequest
 from django.db.utils import IntegrityError
 from user_profiles.exceptions import InvalidFollowRequest
 
 
+@pytest.mark.parametrize('create_user', [
+    (True)
+], indirect=True)
 @pytest.mark.django_db
 def test_make_follow_request_public(create_user):
     """
@@ -25,6 +29,9 @@ def test_make_follow_request_public(create_user):
     assert profile1 in profile2.followers.all()
 
 
+@pytest.mark.parametrize('create_user', [
+    (True)
+], indirect=True)
 @pytest.mark.django_db
 def test_make_follow_request_private(create_user):
     """
@@ -50,8 +57,8 @@ def test_make_follow_request_private(create_user):
 
 
 @pytest.mark.parametrize('create_user, accepted', [
-    (None, True),
-    (None, False)
+    (True, True),
+    (True, False)
 ],
     indirect=['create_user'],
     ids=['accepted', 'not accepted'])
@@ -86,8 +93,8 @@ def test_handle_follow_request(create_user, accepted):
 
 
 @pytest.mark.parametrize('create_user, accepted', [
-    (None, True),
-    (None, False)
+    (True, True),
+    (True, False)
 ],
     indirect=['create_user'],
     ids=['accepted', 'not accepted'])
@@ -114,6 +121,9 @@ def test_handle_follow_request_invalid_request(create_user, accepted):
     assert len(FollowRequest.objects.all()) == 1
 
 
+@pytest.mark.parametrize('create_user', [
+    (True)
+], indirect=True)
 @pytest.mark.django_db
 def test_user_profile_deleted_on_user_delete(create_user):
     """
@@ -136,6 +146,9 @@ def test_user_profile_deleted_on_user_delete(create_user):
     assert len(FollowRequest.objects.all()) == follow_request_before - 1
 
 
+@pytest.mark.parametrize('create_user', [
+    (True)
+], indirect=True)
 @pytest.mark.django_db
 def test_unique_together_constraint_following(create_user):
     user1 = create_user()
@@ -146,6 +159,9 @@ def test_unique_together_constraint_following(create_user):
         Following.objects.create(following_user=user1.profile, followed_user=user2.profile)
 
 
+@pytest.mark.parametrize('create_user', [
+    (True)
+], indirect=True)
 @pytest.mark.django_db
 def test_unique_together_constraint_follow_request(create_user):
     user1 = create_user()
@@ -154,3 +170,22 @@ def test_unique_together_constraint_follow_request(create_user):
 
     with pytest.raises(IntegrityError):
         FollowRequest.objects.create(requesting_profile=user1.profile, target_profile=user2.profile)
+
+
+@pytest.mark.django_db
+def test_user_profile_auto_create(global_user, create_user):
+    """
+    Tests that when a new User is created that it automatically follows the global User instance.
+    """
+
+    user = create_user()
+
+    profile = UserProfile.objects.get(user=user.id)
+
+    global_user = UserProfile.objects.get(user__email=os.environ.get('GLOBAL_EMAIL'))
+    followers = global_user.followers.all()
+    assert user.profile == profile
+    assert len(profile.following.all()) == 1
+    assert len(profile.followers.all()) == 0
+    assert len(followers) == 2
+    assert profile in followers
