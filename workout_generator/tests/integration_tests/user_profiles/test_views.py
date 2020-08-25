@@ -13,10 +13,33 @@ def test_user_profile_detail(auto_login_profile):
     resp = api_client.get(url)
 
     assert resp.status_code == 200
+    assert resp.data['user']['id'] == profile.id
     assert resp.data['weight'] == profile.weight
     assert resp.data['height'] == profile.height
     assert resp.data['bmi'] == profile.bmi
     assert resp.data['visibility'] == profile.visibility
+
+
+@pytest.mark.parametrize('auto_login_profile, is_staff, is_superuser', [
+    (None, True, True),
+    (None, True, False)
+], indirect=['auto_login_profile'],
+    ids=['superuser', 'staff'])
+@pytest.mark.django_db
+def test_user_profile_detail_admin(auto_login_profile, is_staff, is_superuser):
+    _, profile = auto_login_profile()
+    api_client, superuser_profile = auto_login_profile(is_staff=is_staff, is_superuser=is_superuser)
+    url = reverse('profile-detail', kwargs={'pk': profile.id})
+
+    resp = api_client.get(url)
+
+    assert resp.status_code == 200
+    assert resp.data['user']['id'] == profile.id
+    assert resp.data['weight'] == profile.weight
+    assert resp.data['height'] == profile.height
+    assert resp.data['bmi'] == profile.bmi
+    assert resp.data['visibility'] == profile.visibility
+    assert resp.data['user']['id'] != superuser_profile.id
 
 
 @pytest.mark.django_db
@@ -58,6 +81,33 @@ def test_user_profile_update(auto_login_profile):
     assert resp.data['height'] != profile.height
     assert resp.data['bmi'] != profile.bmi
     assert resp.data['visibility'] != profile.visibility
+
+
+@pytest.mark.parametrize('auto_login_profile, is_staff, is_superuser', [
+    (None, True, True),
+    (None, True, False)
+], indirect=['auto_login_profile'],
+    ids=['superuser', 'staff'])
+@pytest.mark.django_db
+def test_user_profile_update_admin(auto_login_profile, is_staff, is_superuser):
+    _, profile = auto_login_profile()
+    api_client, superuser_profile = auto_login_profile(is_staff=is_staff, is_superuser=is_superuser)
+    url = reverse('profile-detail', kwargs={'pk': profile.id})
+    new_data = {'weight': 100, 'height': 61, 'bmi': 10, 'visibility': 'pub'}
+
+    resp = api_client.patch(url, data=new_data)
+
+    assert resp.status_code == 200
+    assert resp.data['user']['id'] == profile.id
+    assert resp.data['weight'] == new_data['weight']
+    assert resp.data['height'] == new_data['height']
+    assert resp.data['bmi'] == new_data['bmi']
+    assert resp.data['visibility'] == new_data['visibility']
+    assert resp.data['weight'] != profile.weight
+    assert resp.data['height'] != profile.height
+    assert resp.data['bmi'] != profile.bmi
+    assert resp.data['visibility'] != profile.visibility
+    assert resp.data['user']['id'] != superuser_profile.id
 
 
 @pytest.mark.parametrize('auto_login_profile, new_data, error_attr, error_code', [
