@@ -1,6 +1,8 @@
 import pytest
 
 from rest_framework.reverse import reverse
+from user_profiles.models import UserProfile
+from user_profiles.serializers import UserProfileSerializer
 
 pytestmark = pytest.mark.usefixtures('global_user')
 
@@ -147,5 +149,38 @@ def test_user_profile_update_fail_not_logged_in(auto_login_profile):
     new_data = {'weight': 100, 'height': 61, 'bmi': 10, 'visibility': 'pub'}
 
     resp = api_client.patch(url, data=new_data)
+
+    assert resp.status_code == 401
+
+
+@pytest.mark.parametrize('auto_login_profile, is_staff, is_superuser', [
+    (None, True, True),
+    (None, True, False)
+], indirect=['auto_login_profile'],
+    ids=['superuser', 'staff'])
+@pytest.mark.django_db
+def test_user_profile_list(auto_login_profile, is_staff, is_superuser):
+    api_client, _ = auto_login_profile(is_staff=is_staff, is_superuser=is_superuser)
+    url = reverse('profile-list')
+
+    resp = api_client.get(url)
+
+    assert resp.status_code == 200
+    assert resp.data == UserProfileSerializer(UserProfile.objects.all(), many=True).data
+
+
+def test_user_profile_list_fail_non_admin(auto_login_profile):
+    api_client, _ = auto_login_profile()
+    url = reverse('profile-list')
+
+    resp = api_client.get(url)
+
+    assert resp.status_code == 403
+
+
+def test_user_profile_list_fail_not_logged_in(api_client):
+    url = reverse('profile-list')
+
+    resp = api_client.get(url)
 
     assert resp.status_code == 401
