@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'django_filters',
     'main',
     'users',
     'user_profiles',
