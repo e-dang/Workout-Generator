@@ -1,8 +1,10 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import ugettext_lazy as _
-
+from main import utils
 
 # Taken from https://krakensystems.co/blog/2020/custom-users-using-django-rest-framework
+
+
 class UserManager(BaseUserManager):
     """
     Custom user model manager where email is the unique identifiers
@@ -17,8 +19,10 @@ class UserManager(BaseUserManager):
         if not email:
             raise ValueError(_('The Email must be set'))
         email = self.normalize_email(email)
+        extras = utils.split_dict_on_model_attrs(self.model, extra_fields)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
+        utils.apply_attrs_to_model(user, extras)
         user.save()
         return user
 

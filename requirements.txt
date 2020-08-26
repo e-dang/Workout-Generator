@@ -6,10 +6,12 @@ coverage==5.2.1
 defusedxml==0.6.0
 Django==3.1
 django-allauth==0.42.0
+django-filter==2.3.0
 django-rest-auth==0.9.5
 djangorestframework==3.11.1
 idna==2.10
 iniconfig==1.0.1
+mock==4.0.2
 more-itertools==8.4.0
 oauthlib==3.1.0
 packaging==20.4
