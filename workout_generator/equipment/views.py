@@ -1,75 +1,40 @@
-from rest_framework.generics import ListCreateAPIView
-from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Equipment, SharedEquipment
+from .models import Equipment
 from .serializers import EquipmentSerializer
-from django.http import Http404
+from rest_framework.permissions import IsAdminUser
+from .permissions import IsOwner
+from main import permissions
 
 
-class EquipmentListCreate(ListCreateAPIView):
-    queryset = Equipment.objects.all()
+class UserEquipmentListView(GenericAPIView):
     serializer_class = EquipmentSerializer
+    permission_classes = [IsOwner | IsAdminUser]
 
-    def list(self, request):
-        """
-        Get all pieces of equipment that have been shared with the User issuing the request.
-        """
+    def get_queryset(self):
+        return Equipment.objects.available_to(self.kwargs['pk'])  # important to use pk in case admin is issuing request
 
-        equipment = [shared.equipment for shared in SharedEquipment.objects.filter(
-            reciever=request.user.id).select_related('equipment')]
-        serializer = EquipmentSerializer(equipment, many=True)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
+    def get(self, request, pk):
+        serializer = self.get_serializer_class()(self.get_queryset(), many=True)
+        return Response(serializer.data)
 
-
-class EquipmentDetail(APIView):
-    def get_object(self, request, pk):
-        try:
-            return SharedEquipment.objects.get(equipment=pk, reciever=request.user.id).equipment
-        except SharedEquipment.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk, format=None):
-        """
-        Get the piece of Equipment specified by the primary key and that has been shared with the User issuing the
-        request.
-        """
-
-        equipment = self.get_object(request, pk)
-        serializer = EquipmentSerializer(equipment)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def post(self, request, pk, format=None):
-        """
-        Get the piece of Equipment specified by the primary key and that has been shared with the User issuing the
-        request. Return a 404 response if that piece of Equipment does not exist or 401 response if that piece of
-        Equipment does not belong to the User, else try to update the piece of Equipment's data. If the update is
-        successful, return the new data and 200 response, else return the errors and a 400 response.
-        """
-
-        equipment = self.get_object(request, pk)
-
-        if equipment.user != request.user:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-
-        serializer = EquipmentSerializer(equipment, data=equipment)
+    def post(self, request, pk):
+        request.data['owner'] = pk  # important to use pk in case admin is issuing request
+        serializer = self.get_serializer_class()(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk, format=None):
-        """
-        Get the piece of Equipment specified by the primary key and that has been shared with the User issuing the
-        request. Return a 404 response if that piece of Equipment does not exist or 401 response if that piece of
-        Equipment does not belong to the User, else delete the piece of Equipment and return a 204 response.
-        """
 
-        equipment = self.get_object(request, pk)
+class EquipmentListView(ListAPIView):
+    queryset = Equipment.objects.all()
+    serializer_class = EquipmentSerializer
+    permission_classes = [IsAdminUser]
 
-        if equipment.user != request.user:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        equipment.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+class EquipmentDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Equipment.objects.all()
+    serializer_class = EquipmentSerializer
+    permission_classes = [permissions.IsOwner | permissions.IsAdmin]

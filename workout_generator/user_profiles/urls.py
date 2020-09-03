@@ -1,7 +1,9 @@
-from django.urls import path
+from django.urls import path, include
 from user_profiles.views import UserProfileListView, UserProfileDetailView
+from equipment.views import UserEquipmentList
 
 urlpatterns = [
     path('', UserProfileListView.as_view(), name='profile-list'),
-    path('<int:pk>/', UserProfileDetailView.as_view(), name='profile-detail')
+    path('<int:pk>/', UserProfileDetailView.as_view(), name='profile-detail'),
+    path('<int:pk>/equipment/', UserEquipmentListView.as_view())
 ]
