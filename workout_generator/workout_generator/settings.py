@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'users',
     'user_profiles',
     'muscles',
+    'content_subscriptions',
     'equipment'
 ]
 
@@ -159,6 +160,7 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 }
 
 AUTH_USER_MODEL = 'users.User'
+CONTENT_SUBSCRIPTION_HOLDER_MODEL = 'user_profiles.UserProfile'
 ACCOUNT_ADAPTER = 'users.adapters.AccountAdapter'
 OLD_PASSWORD_FIELD_ENABLED = True
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
