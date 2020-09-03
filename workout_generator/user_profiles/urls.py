@@ -1,6 +1,6 @@
 from django.urls import path, include
 from user_profiles.views import UserProfileListView, UserProfileDetailView
-from equipment.views import UserEquipmentList
+from equipment.views import UserEquipmentListView
 
 urlpatterns = [
     path('', UserProfileListView.as_view(), name='profile-list'),
