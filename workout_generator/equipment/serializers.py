@@ -12,5 +12,5 @@ class EquipmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Equipment
-        fields = ('user', 'name', 'other_names', 'shared_with')
-        validators = [UniqueTogetherValidator(Equipment.objects.all(), ('user', 'name'))]
+        fields = ('owner', 'name', 'other_names')
+        validators = [UniqueTogetherValidator(Equipment.objects.all(), ('owner', 'name'))]
