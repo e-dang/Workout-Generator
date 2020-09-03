@@ -1,9 +1,10 @@
 from django.db import models
 from users.models import User
 from user_profiles.exceptions import InvalidFollowRequest
+from content_subscriptions.models import SubscriptionHolderAddons
 
 
-class UserProfile(models.Model):
+class UserProfile(SubscriptionHolderAddons, models.Model):
     MALE = 'm'
     FEMALE = 'f'
     UNKNOWN = 'u'
