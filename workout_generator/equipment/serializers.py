@@ -8,9 +8,8 @@ class ArrayField(serializers.ListField):
 
 
 class EquipmentSerializer(serializers.ModelSerializer):
-    other_names = ArrayField()
 
     class Meta:
         model = Equipment
-        fields = ('owner', 'name', 'other_names')
+        fields = ('owner', 'name', 'snames')
         validators = [UniqueTogetherValidator(Equipment.objects.all(), ('owner', 'name'))]

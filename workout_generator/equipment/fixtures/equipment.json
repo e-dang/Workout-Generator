@@ -4,7 +4,7 @@
         "model": "equipment.Equipment",
         "fields": {
             "name": "barbell",
-            "other_names": [],
+            "snames": [],
             "owner": 1
         }
     },
@@ -13,7 +13,7 @@
         "model": "equipment.Equipment",
         "fields": {
             "name": "dumbbell",
-            "other_names": [],
+            "snames": [],
             "owner": 1
         }
     },
@@ -22,7 +22,7 @@
         "model": "equipment.Equipment",
         "fields": {
             "name": "kettlebell",
-            "other_names": [],
+            "snames": [],
             "owner": 1
         }
     },
@@ -31,7 +31,7 @@
         "model": "equipment.Equipment",
         "fields": {
             "name": "resistance band",
-            "other_names": [],
+            "snames": [],
             "owner": 1
         }
     },
@@ -40,7 +40,7 @@
         "model": "equipment.Equipment",
         "fields": {
             "name": "pullup bar",
-            "other_names": [],
+            "snames": [],
             "owner": 1
         }
     },
@@ -49,7 +49,7 @@
         "model": "equipment.Equipment",
         "fields": {
             "name": "bench",
-            "other_names": [],
+            "snames": [],
             "owner": 1
         }
     },
@@ -58,7 +58,7 @@
         "model": "equipment.Equipment",
         "fields": {
             "name": "medicine ball",
-            "other_names": [],
+            "snames": [],
             "owner": 1
         }
     },
@@ -67,7 +67,7 @@
         "model": "equipment.Equipment",
         "fields": {
             "name": "EZ bar",
-            "other_names": [],
+            "snames": [],
             "owner": 1
         }
     },
@@ -76,7 +76,7 @@
         "model": "equipment.Equipment",
         "fields": {
             "name": "landmine",
-            "other_names": [],
+            "snames": [],
             "owner": 1
         }
     },
@@ -85,7 +85,7 @@
         "model": "equipment.Equipment",
         "fields": {
             "name": "cable machine",
-            "other_names": [],
+            "snames": [],
             "owner": 1
         }
     }
