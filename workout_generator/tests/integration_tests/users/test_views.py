@@ -12,9 +12,9 @@ def invalidate_credentials(api_client):
 
 
 @pytest.mark.django_db
-def test_login(api_client, create_user, test_password):
+def test_login(api_client, auto_create_user_factory, test_password):
     url = reverse('rest_login')
-    user = create_user()
+    user = auto_create_user_factory()
 
     resp = api_client.post(url, {'email': user.email, 'password': test_password})
 
@@ -25,9 +25,9 @@ def test_login(api_client, create_user, test_password):
 
 
 @pytest.mark.django_db
-def test_login_fail(api_client, create_user):
+def test_login_fail(api_client, auto_create_user_factory):
     url = reverse('rest_login')
-    user = create_user()
+    user = auto_create_user_factory()
 
     resp = api_client.post(url, {'email': user.email, 'password': 'THE_WRONG_PASSWORD'})
 

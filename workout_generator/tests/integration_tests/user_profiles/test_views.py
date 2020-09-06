@@ -30,7 +30,7 @@ def test_user_profile_detail(auto_login_profile):
 @pytest.mark.django_db
 def test_user_profile_detail_admin(auto_login_profile, is_staff, is_superuser):
     _, profile = auto_login_profile()
-    api_client, superuser_profile = auto_login_profile(is_staff=is_staff, is_superuser=is_superuser)
+    api_client, superuser_profile = auto_login_profile(user__is_staff=is_staff, user__is_superuser=is_superuser)
     url = reverse('profile-detail', kwargs={'pk': profile.id})
 
     resp = api_client.get(url)
@@ -47,7 +47,7 @@ def test_user_profile_detail_admin(auto_login_profile, is_staff, is_superuser):
 @pytest.mark.django_db
 def test_user_profile_detail_fail_wrong_user(auto_login_profile):
     _, profile1 = auto_login_profile()
-    api_client, _ = auto_login_profile(email='JaneDoe@demo.com')
+    api_client, _ = auto_login_profile()
     url = reverse('profile-detail', kwargs={'pk': profile1.id})
 
     resp = api_client.get(url)
@@ -68,9 +68,9 @@ def test_user_profile_detail_fail_not_logged_in(auto_login_profile):
 
 @pytest.mark.django_db
 def test_user_profile_update(auto_login_profile):
-    api_client, profile = auto_login_profile()
+    api_client, profile = auto_login_profile(visibility=UserProfile.PRIVATE)
     url = reverse('profile-detail', kwargs={'pk': profile.id})
-    new_data = {'weight': 100, 'height': 61, 'bmi': 10, 'visibility': 'pub'}
+    new_data = {'weight': 100, 'height': 61, 'bmi': 10, 'visibility': UserProfile.PUBLIC}
 
     resp = api_client.patch(url, data=new_data)
 
@@ -92,10 +92,11 @@ def test_user_profile_update(auto_login_profile):
     ids=['superuser', 'staff'])
 @pytest.mark.django_db
 def test_user_profile_update_admin(auto_login_profile, is_staff, is_superuser):
-    _, profile = auto_login_profile()
-    api_client, superuser_profile = auto_login_profile(is_staff=is_staff, is_superuser=is_superuser)
+    _, profile = auto_login_profile(visibility=UserProfile.PRIVATE)
+    api_client, superuser_profile = auto_login_profile(
+        user__is_staff=is_staff, user__is_superuser=is_superuser)
     url = reverse('profile-detail', kwargs={'pk': profile.id})
-    new_data = {'weight': 100, 'height': 61, 'bmi': 10, 'visibility': 'pub'}
+    new_data = {'weight': 100, 'height': 61, 'bmi': 10, 'visibility': UserProfile.PUBLIC}
 
     resp = api_client.patch(url, data=new_data)
 
@@ -133,7 +134,7 @@ def test_user_profile_update_fail_invalid_data(auto_login_profile, new_data, err
 
 def test_user_profile_update_fail_wrong_user(auto_login_profile):
     _, profile = auto_login_profile()
-    api_client, _ = auto_login_profile(email='JaneDoe@demo.com')
+    api_client, _ = auto_login_profile()
     url = reverse('profile-detail', kwargs={'pk': profile.id})
     new_data = {'weight': 100, 'height': 61, 'bmi': 10, 'visibility': 'pub'}
 
@@ -160,7 +161,7 @@ def test_user_profile_update_fail_not_logged_in(auto_login_profile):
     ids=['superuser', 'staff'])
 @pytest.mark.django_db
 def test_user_profile_list(auto_login_profile, is_staff, is_superuser):
-    api_client, _ = auto_login_profile(is_staff=is_staff, is_superuser=is_superuser)
+    api_client, _ = auto_login_profile(user__is_staff=is_staff, user__is_superuser=is_superuser)
     url = reverse('profile-list')
 
     resp = api_client.get(url)
