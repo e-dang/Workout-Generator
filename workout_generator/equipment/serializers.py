@@ -11,7 +11,7 @@ class EquipmentSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Equipment
-        fields = ['url', 'owner', 'name', 'snames']
+        fields = ['url', 'id', 'owner', 'name', 'snames']
         validators = [UniqueTogetherValidator(Equipment.objects.all(), ['owner', 'name'])]
         extra_kwargs = {
             'owner': {'view_name': 'profile-detail'}

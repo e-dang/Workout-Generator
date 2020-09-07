@@ -15,7 +15,7 @@ class UserEquipmentListView(ListCreateAPIView):
     serializer_class = EquipmentSerializer
     permission_classes = [IsOwner | IsAdminUser]
     filter_backends = [filters.DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filter_class = EquipmentFilter
+    filterset_class = EquipmentFilter
     search_fields = ['name', 'snames']
     ordering_fields = ['owner', 'name']
     ordering = ['name']
@@ -37,7 +37,7 @@ class EquipmentListView(ListAPIView):
     serializer_class = EquipmentSerializer
     permission_classes = [IsAdminUser]
     filter_backends = [filters.DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filter_class = EquipmentFilter
+    filterset_class = EquipmentFilter
     search_fields = ['name', 'snames']
     ordering_fields = ['owner', 'name']
     ordering = ['name']
