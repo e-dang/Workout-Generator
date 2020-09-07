@@ -20,8 +20,10 @@ API_VERSION = 'v1'
 PREFIX_API_URL = f'api/{API_VERSION}/'
 
 extra_patterns = [
-    path(f'users/', include('users.urls')),
-    path(f'muscles/', include('muscles.urls'))
+    path('users/', include('users.urls')),
+    path('muscles/', include('muscles.urls')),
+    path('equipment/', include('equipment.urls')),
+    path('profiles/', include('user_profiles.urls'))
 ]
 
 urlpatterns = [

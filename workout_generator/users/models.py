@@ -6,7 +6,7 @@ from .managers import UserManager
 # Taken from https://krakensystems.co/blog/2020/custom-users-using-django-rest-framework
 class User(AbstractUser):
     username = None
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, db_index=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -14,4 +14,4 @@ class User(AbstractUser):
     objects = UserManager()
 
     def __str__(self):
-        return f'Email: {self.email}'
+        return f'{self.email}'

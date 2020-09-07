@@ -4,6 +4,9 @@ from rest_framework.reverse import reverse
 from muscles.models import Muscle
 
 
+pytestmark = pytest.mark.usefixtures('global_user', 'init_muscles')
+
+
 @pytest.mark.django_db
 def test_muscle_list(auto_login_user):
     url = reverse('muscle-list')

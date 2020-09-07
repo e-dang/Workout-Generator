@@ -4,15 +4,17 @@ from rest_framework.reverse import reverse
 from rest_framework.authtoken.models import Token
 from users.models import User
 
+pytestmark = pytest.mark.usefixtures('global_user')
+
 
 def invalidate_credentials(api_client):
     api_client.credentials(HTTP_AUTHORIZATION='Token INVALID_TOKEN')
 
 
 @pytest.mark.django_db
-def test_login(api_client, create_user, test_password):
+def test_login(api_client, auto_create_user_factory, test_password):
     url = reverse('rest_login')
-    user = create_user()
+    user = auto_create_user_factory()
 
     resp = api_client.post(url, {'email': user.email, 'password': test_password})
 
@@ -23,9 +25,9 @@ def test_login(api_client, create_user, test_password):
 
 
 @pytest.mark.django_db
-def test_login_fail(api_client, create_user):
+def test_login_fail(api_client, auto_create_user_factory):
     url = reverse('rest_login')
-    user = create_user()
+    user = auto_create_user_factory()
 
     resp = api_client.post(url, {'email': user.email, 'password': 'THE_WRONG_PASSWORD'})
 
@@ -44,7 +46,7 @@ def test_logout(auto_login_user):
 
 
 @pytest.mark.django_db
-def test_logout_fail(auto_login_user):
+def test_logout_fail_invalid_credentials(auto_login_user):
     url = reverse('rest_logout')
     api_client, _ = auto_login_user()
     invalidate_credentials(api_client)
@@ -54,6 +56,19 @@ def test_logout_fail(auto_login_user):
     assert resp.status_code == 401
     assert len(resp.data) == 1
     assert 'Invalid token.' in resp.data['detail']
+    assert len(Token.objects.all()) == 1
+
+
+@pytest.mark.django_db
+def test_logout_not_logged_in(auto_login_user):
+    url = reverse('rest_logout')
+    api_client, _ = auto_login_user()
+    api_client.credentials()
+
+    resp = api_client.post(url)
+
+    assert resp.status_code == 200
+    assert len(resp.data) == 1
     assert len(Token.objects.all()) == 1
 
 
@@ -67,13 +82,14 @@ def test_logout_fail(auto_login_user):
 @pytest.mark.django_db
 def test_registration(api_client, data):
     url = reverse('rest_register')
+    before = len(User.objects.all())
 
     resp = api_client.post(url, data)
 
     assert resp.status_code == 201
     user = User.objects.get(email=data['email'])
     assert user
-    assert len(User.objects.all()) == 1
+    assert len(User.objects.all()) == before + 1
     assert resp.data['key'] == Token.objects.get(user=user.id).key
 
 
@@ -128,24 +144,40 @@ def test_registration_fail_duplicate_email(api_client):
 def test_user_delete(auto_login_user):
     url = reverse('delete-user')
     api_client, _ = auto_login_user()
+    before = len(User.objects.all())
 
     resp = api_client.delete(url)
 
     assert resp.status_code == 204
-    assert len(User.objects.all()) == 0
+    assert len(User.objects.all()) == before - 1
 
 
 @pytest.mark.django_db
-def test_user_delete_fail(auto_login_user):
+def test_user_delete_fail_invalid_credentials(auto_login_user):
     url = reverse('delete-user')
     api_client, _ = auto_login_user()
+    before = len(User.objects.all())
     invalidate_credentials(api_client)
 
     resp = api_client.delete(url)
 
     assert resp.status_code == 401
-    assert len(User.objects.all()) == 1
-    assert 'Invalid token.' in resp.data['detail']
+    assert len(User.objects.all()) == before
+    assert resp.data['detail'].code == 'authentication_failed'
+
+
+@pytest.mark.django_db
+def test_user_delete_fail_not_logged_in(auto_login_user):
+    url = reverse('delete-user')
+    api_client, _ = auto_login_user()
+    before = len(User.objects.all())
+    api_client.credentials()
+
+    resp = api_client.delete(url)
+
+    assert resp.status_code == 401
+    assert len(User.objects.all()) == before
+    assert resp.data['detail'].code == 'not_authenticated'
 
 
 @pytest.mark.django_db
@@ -162,7 +194,7 @@ def test_user_detail_get(auto_login_user):
 
 
 @pytest.mark.django_db
-def test_user_detail_get_fail_not_logged_in(auto_login_user):
+def test_user_detail_get_fail_invalid_credentials(auto_login_user):
     url = reverse('rest_user_details')
     api_client, _ = auto_login_user()
     invalidate_credentials(api_client)
@@ -170,7 +202,19 @@ def test_user_detail_get_fail_not_logged_in(auto_login_user):
     resp = api_client.get(url)
 
     assert resp.status_code == 401
-    assert 'Invalid token.' in resp.data['detail']
+    assert resp.data['detail'].code == 'authentication_failed'
+
+
+@pytest.mark.django_db
+def test_user_detail_get_fail_not_logged_in(auto_login_user):
+    url = reverse('rest_user_details')
+    api_client, _ = auto_login_user()
+    api_client.credentials()
+
+    resp = api_client.get(url)
+
+    assert resp.status_code == 401
+    assert resp.data['detail'].code == 'not_authenticated'
 
 
 @pytest.mark.django_db
@@ -190,7 +234,7 @@ def test_user_detail_put(auto_login_user):
 
 
 @pytest.mark.django_db
-def test_user_detail_put_fail_not_logged_in(auto_login_user):
+def test_user_detail_put_fail_invalid_credentials(auto_login_user):
     url = reverse('rest_user_details')
     api_client, _ = auto_login_user()
     invalidate_credentials(api_client)
@@ -199,7 +243,20 @@ def test_user_detail_put_fail_not_logged_in(auto_login_user):
     resp = api_client.put(url, data)
 
     assert resp.status_code == 401
-    assert 'Invalid token.' in resp.data['detail']
+    assert resp.data['detail'].code == 'authentication_failed'
+
+
+@pytest.mark.django_db
+def test_user_detail_put_fail_not_logged_in(auto_login_user):
+    url = reverse('rest_user_details')
+    api_client, _ = auto_login_user()
+    api_client.credentials()
+    data = {'first_name': 'new_first_name', 'last_name': 'new_last_name'}
+
+    resp = api_client.put(url, data)
+
+    assert resp.status_code == 401
+    assert resp.data['detail'].code == 'not_authenticated'
 
 
 @pytest.mark.django_db
@@ -230,7 +287,7 @@ def test_user_detail_patch(auto_login_user):
 
 
 @pytest.mark.django_db
-def test_user_detail_patch_fail_not_logged_in(auto_login_user):
+def test_user_detail_patch_fail_invalid_credentials(auto_login_user):
     url = reverse('rest_user_details')
     api_client, _ = auto_login_user()
     invalidate_credentials(api_client)
@@ -239,7 +296,20 @@ def test_user_detail_patch_fail_not_logged_in(auto_login_user):
     resp = api_client.patch(url, data)
 
     assert resp.status_code == 401
-    assert 'Invalid token.' in resp.data['detail']
+    assert resp.data['detail'].code == 'authentication_failed'
+
+
+@pytest.mark.django_db
+def test_user_detail_patch_fail_not_logged_in(auto_login_user):
+    url = reverse('rest_user_details')
+    api_client, _ = auto_login_user()
+    api_client.credentials()
+    data = {'first_name': 'new_first_name', 'last_name': 'new_last_name'}
+
+    resp = api_client.patch(url, data)
+
+    assert resp.status_code == 401
+    assert resp.data['detail'].code == 'not_authenticated'
 
 
 @pytest.mark.django_db
@@ -256,7 +326,7 @@ def test_user_change_password(auto_login_user, test_password):
 
 
 @pytest.mark.django_db
-def test_user_change_password_fail_not_logged_in(auto_login_user, test_password):
+def test_user_change_password_fail_invalid_credentials(auto_login_user, test_password):
     url = reverse('rest_password_change')
     api_client, _ = auto_login_user()
     invalidate_credentials(api_client)
@@ -266,7 +336,21 @@ def test_user_change_password_fail_not_logged_in(auto_login_user, test_password)
     resp = api_client.post(url, data)
 
     assert resp.status_code == 401
-    assert 'Invalid token.' in resp.data['detail']
+    assert resp.data['detail'].code == 'authentication_failed'
+
+
+@pytest.mark.django_db
+def test_user_change_password_fail_not_logged_in(auto_login_user, test_password):
+    url = reverse('rest_password_change')
+    api_client, _ = auto_login_user()
+    api_client.credentials()
+    new_password = 'thisisanewpassword123'
+    data = {'new_password1': new_password, 'new_password2': new_password, 'old_password': test_password}
+
+    resp = api_client.post(url, data)
+
+    assert resp.status_code == 401
+    assert resp.data['detail'].code == 'not_authenticated'
 
 
 @pytest.mark.parametrize('auto_login_user, test_password, data, error_field', [
@@ -314,7 +398,7 @@ def test_password_reset_request(auto_login_user, logout):
 
 
 @pytest.mark.django_db
-def test_password_reset_request_fail_mismatch_credentials(auto_login_user):
+def test_password_reset_request_fail_invalid_credentials(auto_login_user):
     url = reverse('rest_password_reset')
     api_client, user = auto_login_user()
     invalidate_credentials(api_client)
@@ -347,7 +431,7 @@ def test_password_reset_confirm(auto_login_user, logout):
 
 
 @pytest.mark.django_db
-def test_password_reset_confirm_fail_mismatch_credentials(auto_login_user):
+def test_password_reset_confirm_fail_invalid_credentials(auto_login_user):
     url = reverse('rest_password_reset')
     api_client, user = auto_login_user()
     resp = api_client.post(url, {'email': user.email})
